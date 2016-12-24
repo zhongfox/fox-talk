@@ -1,9 +1,7 @@
-# HuxBlog Boilerplate
+# Zhongfox Blog
 
-##### This is the boilerplate of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), all documents is over there!
+大家好, 这是zhongfox的博客.
 
-#### [View Boilerplate &rarr;](http://huangxuan.me/huxblog-boilerplate/)
+我在2012年~2016的博客是在<http://zhongfox.github.io>
 
-#### [View Live Hux Blog &rarr;](http://huangxuan.me)
-
-## If you like Hux Blog, Please star [huxpro.github.io repo](https://github.com/Huxpro/huxpro.github.io) instead of this! Thank you!
+在2016年圣诞节, 我为我的博客换了一个新的主题, 今后的博客将收录在<http://zhongfox.github.io/fox-talk>
