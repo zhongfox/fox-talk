@@ -3,14 +3,9 @@ layout:     post
 title:      "Evaluation Strategy"
 subtitle:   "理解值传递和引用传递"
 author:     "Zhongfox"
-header-img: "img/nash/nash5.png"
-tags:
-    - 编程
-    - JavaScript
-    - Ruby
-    - Go
-    - Java
-    - C#
+header-img: img/pic/2016/09/yunhai.jpg
+tags: [程序设计, JavaScript, Ruby, Go, Java]
+
 ---
 
 ### 求值策略和内容类型
