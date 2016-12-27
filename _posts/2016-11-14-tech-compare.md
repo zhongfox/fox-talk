@@ -1,8 +1,7 @@
 ---
 layout: post
-tags : [kafka, cache, es6]
+tags : [kafka, 缓存, es6]
 title:  技术文章中的比喻
-subtitle:   ""
 author:     "Zhongfox"
 header-img: img/pic/2015/10/kanasi3.jpg
 

@@ -3,7 +3,6 @@ layout: post
 tags : [tcp, http]
 title: HTTP keep-alive
 subtitle:   "厘清TCP Keepalive/HTTP keep-alive"
-author:     "Zhongfox"
 header-img: img/pic/2015/10/xinjiang1.jpg
 
 ---

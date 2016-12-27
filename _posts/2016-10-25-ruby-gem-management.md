@@ -1,10 +1,10 @@
 ---
 layout: post
-tags : [rails, ruby, bundle, gem]
+tags : [rails, ruby, bundle, gem, 包管理]
 title: Ruby 包管理
 subtitle:   "期待Bundler和RubyGem合并"
-author:     "Zhongfox"
 header-img: img/pic/2015/10/tubu2.jpg
+
 ---
 
 ## Kernel#require

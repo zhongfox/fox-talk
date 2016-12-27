@@ -3,7 +3,6 @@ layout: post
 tags : [mysql]
 title: Mysql 中的锁
 subtitle:   "只有数据库层提供的锁机制才能真正保证数据访问排他性"
-author:     "Zhongfox"
 header-img: img/pic/2015/10/kanasi.jpg
 
 ---
