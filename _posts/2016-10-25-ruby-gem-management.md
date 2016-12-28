@@ -48,70 +48,71 @@ header-img: img/pic/2015/10/tubu2.jpg
 * 覆写了`Kernel#require`, 老的require别名为`gem_original_require`:
 
   >  源码中的注释:
-  When you call <tt>require 'x'</tt>, this is what happens:  
-  * If the file can be loaded from the existing Ruby loadpath, it is.  
-  * Otherwise, installed gems are searched for a file that matches.  If it's found in gem 'y', that gem is activated (added to the
-  loadpath).
+  > When you call <tt>require 'x'</tt>, this is what happens:  
+  > * If the file can be loaded from the existing Ruby loadpath, it is.  
+  > * Otherwise, installed gems are searched for a file that matches.  If it's found in gem 'y', that gem is activated (added to the loadpath).
 
-  先从`LOAD_PATH`中查找
+  先从`LOAD_PATH`中查找, 如果`LOAD_PATH`没有, 从`Gem::Specification`中查找, 如果找到, 激活, 并加入`LOAD_PATH`
 
-  如果`LOAD_PATH`没有, 从`Gem::Specification`中查找, 如果找到, 激活, 并加入`LOAD_PATH`
+  大致的过程:
 
-      Gem.try_activate(path)
-      ...
-      Gem::Specification.find_by_path path
-      ...
-      spec.activate
-      ...
-      activate_dependencies
-      ...
-      add_self_to_load_path
-      ...
+  ```ruby
+  Gem.try_activate(path)
+  ...
+  Gem::Specification.find_by_path path
+  ...
+  spec.activate
+  ...
+  activate_dependencies
+  ...
+  add_self_to_load_path
+  ...
 
-      >> Gem.default_dir 是存放gem的默认目录, 本机是
-      "/Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0"
-      该值由RbConfig::CONFIG的一些值决定, 和ruby版本等有关系
+  >> Gem.default_dir 
+  #是存放gem的默认目录, 本机是
+  #"/Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0"
+  #该值由RbConfig::CONFIG的一些值决定, 和ruby版本等有关系
 
+  >> Gem::Specification.default_specifications_dir 
+  #是根据Gem.default_dir算出
+  #"/Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0/specifications/default"
+  #这里面存的貌似是一些全局gem的 spec, 比如bundler, rake等
+  #对应的gem在 /Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0/gems
 
-      >> Gem::Specification.default_specifications_dir 是根据Gem.default_dir算出
-      "/Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0/specifications/default"
-      这里面存的貌似是一些全局gem的 spec, 比如bundler, rake等
-      对应的gem在 /Users/zhonghua/.rvm/rubies/ruby-2.1.1/lib/ruby/gems/2.1.0/gems
+  >> Gem.path
+  [
+      [0] "/Users/zhonghua/.rvm/gems/ruby-2.1.1",
+      [1] "/Users/zhonghua/.rvm/gems/ruby-2.1.1@global" #全局包安装到这下面的gems目录
+  ]
 
-      >> Gem.path
-      [
-          [0] "/Users/zhonghua/.rvm/gems/ruby-2.1.1",
-          [1] "/Users/zhonghua/.rvm/gems/ruby-2.1.1@global" 全局包安装到这下面的gems目录
-      ]
+  #Gem.path 基本是从ENV["GEM_PATH"]来的
+  #另外还有一个GEM_HOME环境变量, GEM_PATH是包括GEM_HOME的, 区别: http://stackoverflow.com/questions/11277227/whats-the-difference-between-gem-home-and-gem-path
+  #这估计是什么历史原因吧
 
-      Gem.path 基本是从ENV["GEM_PATH"]来的
-      另外还有一个GEM_HOME环境变量, GEM_PATH是包括GEM_HOME的, 区别: http://stackoverflow.com/questions/11277227/whats-the-difference-between-gem-home-and-gem-path
-      这估计是什么历史原因吧
+  >> Gem::Specification.dirs 是从Gem.path得来
+  [
+      [0] "/Users/zhonghua/.rvm/gems/ruby-2.1.1/specifications",
+      [1] "/Users/zhonghua/.rvm/gems/ruby-2.1.1@global/specifications"
+  ]
 
-      >> Gem::Specification.dirs 是从Gem.path得来
-      [
-          [0] "/Users/zhonghua/.rvm/gems/ruby-2.1.1/specifications",
-          [1] "/Users/zhonghua/.rvm/gems/ruby-2.1.1@global/specifications"
-      ]
+  #最终gem spec寻找是在`Gem::Specification.default_specifications_dir` + Gem::Specification.dirs
 
-      最终gem spec寻找是在`Gem::Specification.default_specifications_dir` + Gem::Specification.dirs
-
-      Gem.loaded_specs 用于记录加载过得gem
-
-      每个gem是 Gem::Specification的实例
-
-      add_self_to_load_path  会把gem的full_require_paths 加到LOAD_PATH中
-
-      最终再用原始的require加载gem: gem_original_require(path)
+  #Gem.loaded_specs 用于记录加载过得gem
+  #每个gem是 Gem::Specification的实例
+  #add_self_to_load_path  会把gem的full_require_paths 加到LOAD_PATH中
+  #最终再用原始的require加载gem: gem_original_require(path)
+  ```
 
 * 一键安装与卸载
 
 * 支持同一个包多版本安装
 
-      %gem install rails -v 5.0
+  ```ruby
+  %gem install rails -v 5.0
 
-      gem "rack", "1.0" # 把那个特定的版本加入 $LOAD_PATHS
-      require "rack"
+  gem "rack", "1.0" # 把那个特定的版本加入 $LOAD_PATHS
+  require "rack"
+  ```
 
 * `gem(gem_name, *requirements)` 和`require(path)` 加载的区别
 
