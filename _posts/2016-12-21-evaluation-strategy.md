@@ -59,7 +59,7 @@ func main() {
 }
 ```
 
-可以看到me.name经过change后没有变化, 这是值传递的原因.
+可以看到me.name经过change后没有变化, 看起来证明了「值传递无法改变原值」, 其实不然, 见下文.
 
 Ruby 是也是值传递, 我们来看一个容易误解的例子:
 
@@ -144,6 +144,8 @@ me = { name: 'fox' }
 change(me)
 puts(me[:name]) # fox; 没被改变
 ```
+
+对于值传递的Golang, Javascript等也有同上的例子, 可以自行试试.
 
 ---
 
