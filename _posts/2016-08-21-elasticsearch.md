@@ -2,6 +2,8 @@
 layout: post
 tags : [nosql, elasticsearch, 分布式]
 title: Elasticsearch
+subtitle: Elasticsearch的自学笔记
+header-img: img/pic/2016/09/mohai.jpg
 
 ---
 
