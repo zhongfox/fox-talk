@@ -20,6 +20,17 @@ permalink: /404.html
 	</div>
 </header>
 
-<script>
+<script type="text/javascript">
 	document.body.classList.add('page-fullscreen');
+
+  //进行老页面跳转
+  var path = location.pathname;
+  var oldPathPattern = /^\/blog\/.*(\/\d+\/\d+\/\d+.*)/
+  var execResult = oldPathPattern.exec(path);
+  var newPath = "";
+
+  if (execResult && execResult[1]) {
+    newPath = execResult[1];
+    window.location.href = newPath;
+  }
 </script>
