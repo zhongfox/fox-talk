@@ -155,7 +155,7 @@ C# 里既支持值传递, 又支持引用传递, 比对起来看看:
 
 通过值传递调用:
 
-```C#
+```cs
 using System;
 public class Person
 {
@@ -184,7 +184,7 @@ public class testEvaluation
 
 通过引用传递调用:
 
-```C#
+```cs
 using System;
 public class Person
 {
@@ -217,7 +217,47 @@ public class testEvaluation
 
 Evaluation 影响的是传入的「原值」, 而对原值指向的原始对象的影响, 还需要结合Value Content和改变方式:
 
-<table><tbody><tr><th>Evaluation</th><th >对原值的影响</th><th ><span style="color: #000000;" data-mce-style="color: #000000;">Value Content</span></th><th >改变方式</th><th >对原值指向的原始对象的影响</th></tr><tr><td  rowspan="4">值传递</td><td  rowspan="4">对原值进行复制, 无法改变原值</td><td  rowspan="2"><span>值类型</span></td><td >change</td><td >无法改变</td></tr><tr><td >mutate</td><td >无法改变</td></tr><tr><td  rowspan="2"><p><span>引用类型</span></p><p><span>Call by sharing</span></p></td><td ><span>change</span></td><td >无法改变</td></tr><tr><td ><span>mutate</span></td><td >可以改变</td></tr><tr><td colspan="1" width="" >引用传递</td><td colspan="1" width="" >没有复制, 可以改变原值</td><td colspan="1" width="" >值类型/引用</td><td colspan="1" width="" ><span>change/<span>mutate</span></span></td><td colspan="1" width="" ><span>可以改变</span></td></tr></tbody></table>
+<table><tbody>
+  <tr>
+    <th>Evaluation</th>
+    <th >对原值的影响</th>
+    <th >Value Content</th>
+    <th >实例</th>
+    <th >改变方式</th>
+    <th >对原值指向的原始对象的影响</th>
+  </tr>
+  <tr>
+    <td  rowspan="4">值传递</td>
+    <td  rowspan="4">对原值复制<br>无法改变原值</td>
+    <td  rowspan="2">值类型</td>
+    <td >Go<br>JavaScript_primitive<br>Ruby_Symbol_Fixnum</td>
+    <td >change</td>
+    <td >无法改变</td>
+  </tr>
+  <tr>
+    <td >Go</td>
+    <td >mutate</td>
+    <td >无法改变</td>
+  </tr>
+  <tr>
+    <td  rowspan="2">引用类型<br>Call by sharing</td>
+    <td  rowspan="2">Ruby<br>Javascript_Object<br>Go_map_channel_slice</td>
+    <td >change</td>
+    <td >无法改变</td>
+  </tr>
+  <tr>
+    <td >mutate</td>
+    <td >可以改变</td>
+  </tr>
+  <tr>
+    <td colspan="1">引用传递</td>
+    <td colspan="1">没有复制<br>可以改变原值</td>
+    <td colspan="1">值类型/引用</td>
+    <td colspan="1">C#</td>
+    <td colspan="1">change/mutate</td>
+    <td colspan="1">可以改变</td>
+  </tr>
+</tbody></table>
 
 
 
