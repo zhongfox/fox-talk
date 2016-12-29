@@ -2,6 +2,8 @@
 layout: post
 tags : [工具, supervisor]
 title: 使用supervisor
+subtitle: ruby 有god, python有supervisor
+header-img: img/pic/2015/10/tubu3.jpg
 
 ---
 
