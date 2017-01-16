@@ -5,25 +5,31 @@ title: javascript 继承
 
 ---
 
-    var util=require('util');
+```javascript
+var util=require('util');
 
-    function A() {};
-    A.prototype.a = function() {console.log('a')};
-    function B() {A.call(this)}; //目的是让this去执行A方法, 这样this可以有A方法里定义的属性 (类似其他语言中调用super)
-    util.inherits(B, A);
+function A() {};
+A.prototype.a = function() {console.log('a')};
+function B() {A.call(this)}; //目的是让this去执行A方法, 这样this可以有A方法里定义的属性 (类似其他语言中调用super)
+util.inherits(B, A);
 
-    var a = new A();
-    var b = new B();
+var a = new A();
+var b = new B();
+```
 
 或者
 
-    function A() {};
-    A.prototype.a = function() {console.log('a')};
-    function B() {};
-    B.prototype = new A();
+```javascript
+function A() {};
+A.prototype.puts = function() {console.log('hello world');};
+function B() {};
+B.prototype = new A();
 
-    var a = new A();
-    var b = new B();
+var a = new A();
+var b = new B();
+
+b.puts() //hello world
+```
 
 
 ---
