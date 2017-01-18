@@ -331,8 +331,7 @@ Note that this pattern is not a regexp, it’s closer to a shell glob. See File.
 
 1. 你真的理解「约定大于配置」的原因吗? 你真的尊重「约定大于配置」吗?
 
-
-   违反rails的「约定」会带来沉重的代价, concern不在它该在的位置, 没法自动加载, 需要在model写奇怪的代码进行手动require.
+   违反rails的「约定」会带来不必要的代价, concern不在它该在的位置, 没法自动加载, 需要在model写奇怪的代码进行手动require.
 
    这个问题发生在一两个月前, 导致若干rake异常, 只有部分机器报错. 开发排查, 运维排查, 开发运维扯皮, 最后迫不得已上线调试, 前后也花了将近2个小时.
 
