@@ -182,6 +182,7 @@ end
 ```
 
 输出结果:
+
 ```
 vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in 'require'
 vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in 'block in require'
@@ -221,6 +222,7 @@ end
 ```
 
 输出结果:
+
 ```
 uninitialized constant Concerns::ImageUploadable
 app/models/home_banner.rb:4:in `<class:HomeBanner>'
@@ -288,6 +290,7 @@ Note that this pattern is not a regexp, it’s closer to a shell glob. See File.
 还是不放心? 在两台机器的irb分别执行一下:
 
 出错的机器:
+
 ```
 > Dir['lib/data_service/public/*.rb'].grep /st_superscript|home_banner/
 => [
