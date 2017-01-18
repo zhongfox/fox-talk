@@ -1,7 +1,8 @@
 ---
-layout: post
+layout: keynote
 tags : [web架构, 微服务]
 title: 微服务
+iframe:  "http://127.0.0.1:4000/nodeppt/microservice.htm"
 
 ---
 
@@ -120,11 +121,11 @@ API Gateway 的职责:
 
 **一对一**
 
-* 同步: 
+* 同步:
 
   * 请求/响应: REST(HTTP), Thrift
 
-* 异步: 
+* 异步:
 
   * 通知: 使用消息系统, channel只有一个消费者, 以实现点对点的通知
   * 请求/异步响应: TODO
