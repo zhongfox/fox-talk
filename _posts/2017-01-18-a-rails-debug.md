@@ -113,13 +113,14 @@ end
 class HomeBanner < ActiveRecord::Base
   puts "3333333: #{HomeBanner.object_id}" # 调试代码
   include Concerns::ImageUploadable
-.......
+  .......
   class << self
     def find_special_banner(banner_type = "", user_type = "")
       ......
     end
   end
-.......
+  .......
+end
 ```
 
 
