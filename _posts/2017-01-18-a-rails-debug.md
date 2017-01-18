@@ -183,16 +183,16 @@ end
 
 输出结果:
 ```
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in `require'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in `block in require'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:240:in `load_dependency'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in `require'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:360:in `require_or_load'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:494:in `load_missing_constant'
-vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:184:in `const_missing'
-lib/data_service/base.rb:81:in `const_get'
-lib/data_service/base.rb:81:in `inherited'
-lib/data_service/public/home_banner.rb:1:in `<top (required)>'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in 'require'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in 'block in require'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:240:in 'load_dependency'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:274:in 'require'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:360:in 'require_or_load'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:494:in 'load_missing_constant'
+vendor/bundle/ruby/2.1.0/gems/activesupport-4.2.6/lib/active_support/dependencies.rb:184:in 'const_missing'
+lib/data_service/base.rb:81:in 'const_get'
+lib/data_service/base.rb:81:in 'inherited'
+lib/data_service/public/home_banner.rb:1:in '<top (required)>'
 ```
 
 可以看到项目加载HomeBanner的入口在`lib/data_service/base.rb`:
