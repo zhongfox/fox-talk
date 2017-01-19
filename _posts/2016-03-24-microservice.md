@@ -2,7 +2,7 @@
 layout: keynote
 tags : [web架构, 微服务]
 title: 微服务
-iframe:  "http://127.0.0.1:4000/nodeppt/microservice.htm"
+iframe:  "/nodeppt/microservice.htm"
 
 ---
 
