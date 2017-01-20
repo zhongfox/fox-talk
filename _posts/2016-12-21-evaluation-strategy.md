@@ -136,7 +136,7 @@ func main() {
 
 ```ruby
 def change(person)
-  person[:name] = { name: 'zhong' }
+  person = { name: 'zhong' }
 end
 
 me = { name: 'fox' }

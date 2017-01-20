@@ -1,0 +1,93 @@
+---
+layout: page
+title: "About"
+description: "Hey, this is Zhongfox."
+header-img: "img/about-bg.jpg"
+---
+
+<div class="zh post-container">
+    <blockquote>
+        浅尝辄止是危险的事情
+    </blockquote>
+
+    程序员, 篮球迷.<br>
+
+    做过一段时间前端开发, 后续主要从事web后端开发, 主要使用Ruby和Node.js, 用过一点Golang, Java和Lua.<br>
+
+    最喜欢的语言是Ruby, 打算学习的下一门语言是elixir.
+
+    <br>
+
+    喜欢户外运动, 除了写代码, 闲暇时间主要花在运动上, 最喜欢的运动是打篮球, 一周大概会打2到3次篮球, 打篮球的都是我的好朋友.<br>
+
+    偶尔也会踢足球, 打打羽毛球, 骑车, 爬山. 如果连续几天不运动会让我很不舒服.<br>
+
+    最喜欢的篮球运动员是Steve Nash, 喜欢的NBA球员还有KD, 石佛, 司机, 韦德, 雷阿伦. 最近又迷上了欧文.<br>
+
+    <br>
+
+    其他领域我知之甚少, 世界那么大, 还有很多值得去探索的, 期待未来更多的分享, 更多的精彩.
+
+</div>
+
+{% if site.duoshuo_username %}
+<!-- 多说评论框 start -->
+<div class="comment">
+    <div class="ds-thread"
+    {% if site.duoshuo_username == "huxblog" %}
+        data-thread-id="1187623191091085319"
+    {% else %}
+        data-thread-key="{{site.duoshuo_username}}/about"
+    {% endif %}
+
+    data-title="{{page.title}}"
+    data-url="{{site.url}}/about/"></div>
+</div>
+<!-- 多说评论框 end -->
+
+<!-- Duoshuo hacking -->
+<input id="dsUser" type="hidden" value="{{site.duoshuo_username}}"  />
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User hacking by Hux
+    var _user = document.getElementById('dsUser').value;
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+{% endif %}
+
+
+{% if site.disqus_username %}
+<!-- disqus 评论框 start -->
+<div class="comment">
+    <div id="disqus_thread" class="disqus-thread">
+
+    </div>
+</div>
+<!-- disqus 评论框 end -->
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "{{site.disqus_username}}";
+    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
+    var disqus_url = "{{site.url}}{{page.url}}";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+{% endif %}
