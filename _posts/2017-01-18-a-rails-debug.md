@@ -82,13 +82,14 @@ end
 # app/models/home_banner.rb
 class HomeBanner < ActiveRecord::Base
   include Concerns::ImageUploadable
-.......
+  .......
   class << self
     def find_special_banner(banner_type = "", user_type = "")
       ......
     end
   end
-.......
+  .......
+end
 ```
 
 #### 类是否一致: `Object#object_id`
@@ -100,11 +101,11 @@ Ruby提供了`Object#object_id` 可以作为对象的标识, 因此先在以上2
 ```ruby
 # lib/data_service/public/home_banner.rb
 class DataService::HomeBanner < DataService::Base
-......
-puts "1111111: #{HomeBanner.object_id}" # 调试代码
-puts "2222222: #{::HomeBanner.object_id}" # 调试代码
-banner = HomeBanner.find_special_banner(banner_type, user_type).first
-......
+  ......
+  puts "1111111: #{HomeBanner.object_id}" # 调试代码
+  puts "2222222: #{::HomeBanner.object_id}" # 调试代码
+  banner = HomeBanner.find_special_banner(banner_type, user_type).first
+  ......
 end
 ```
 
@@ -123,6 +124,7 @@ class HomeBanner < ActiveRecord::Base
 end
 ```
 
+输入如下:
 
 > 3333333: 70249085971460  
 > 1111111: 70249085971460  
@@ -253,6 +255,8 @@ class StSuperscript < ActiveRecord::Base
 
 在两台机器的`st_superscript.rb`和`home_banner.rb`分别增加调试代码, 两台机器打印结果的顺序不同, 证明了之前的猜测.
 
+![加载顺序不同](/assets/images/a_rails_debug/require_sequence.png)
+
 #### 文件加载顺序
 
 相同的代码, 在几乎相同的机器上, 文件加载顺序不一致, 这个比较罕见, 不过可能的原因也有很多, 很多shell 命令都不保证文件遍历的顺序.
@@ -354,4 +358,4 @@ Note that this pattern is not a regexp, it’s closer to a shell glob. See File.
 
 6. 尊重结果, 按图索骥.
 
-   以后遇到类似bug, 不要轻易说「你的环境有问题吧?」 「在我这里可是好的」
+   以后遇到类似bug, 不要轻易说「你的环境有问题吧?」 「在我这里可是好的」, 因为这一定是「你」的问题.  [The First Rule of Programming: It's Always Your Fault](http://blog.codinghorror.com/the-first-rule-of-programming-its-always-your-fault/)
