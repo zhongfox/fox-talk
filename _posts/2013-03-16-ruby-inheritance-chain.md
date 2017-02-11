@@ -55,7 +55,7 @@ Ruby在方法查找和常量查找都依赖继承链，直接上图：
 
   总结:
 
-  * 实例方法存在与本类中(`klass.instance_methods`), 单件方法存在于其单件类中(`obj.singleton_methods`)
+  * 实例方法存在于本类中(`klass.instance_methods`), 单件方法存在于其单件类中(`obj.singleton_methods`)
 
   * 类的继承实现了类的实例方法的传承(实现实例方法继承); 单件类的继承实现了单件的实例方法的传承(实现类方法继承)
 
