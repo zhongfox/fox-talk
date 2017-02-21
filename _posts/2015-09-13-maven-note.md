@@ -238,7 +238,7 @@ title: Maven
 
   * 一个实际项目的多个maven通常有相同的groupId, 如果是一起开发, 通常还有相同的version
   * artifactId 通常还需要相同的前缀, 通常是实际项目名
-  * module的目录名称, 最好与artifactId (不是强制要求)
+  * module的目录名称, 最好与artifactId相同 (不是强制要求)
 
 * 坐标在pom中的定义:
 
