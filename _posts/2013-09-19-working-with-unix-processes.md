@@ -1,6 +1,6 @@
 ---
 layout: post
-tags : [process, ruby, 读书笔记]
+tags : [process, 并发, ruby, 读书笔记]
 title: 《Working with Unix Processes》读书笔记
 
 ---

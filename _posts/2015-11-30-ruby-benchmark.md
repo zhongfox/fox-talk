@@ -5,7 +5,7 @@ title: Ruby Benchmark
 
 ---
 
-##标准库的Benchmark
+## 标准库的Benchmark
 
 * `Benchmark.measure {code}`
 
