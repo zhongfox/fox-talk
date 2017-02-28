@@ -188,6 +188,48 @@ title: 学习KOA 之前需要知道的
   * `co(fn*).then( val => )` co()返回一个promise, `then(val)`中的val是`fn*`中的return值
   * `var fn = co.wrap(fn*)` 把generator转换为Promise
 
+---
+
+2017.2.25 补充:
+
+通常来说:
+
+```javascript
+new Promise(function (resolve, reject) {
+  // resolve(value) 将调用resolveHandler
+  // rejectHandler(value) 将调用rejectHandler
+}).then(resolveHandler, rejectHandler)
+```
+
+不过如果resolve的参数是一个rejected promise, 将调用rejectHandler:
+
+```javascript
+var p = new Promise(function (resolve, reject){
+  resolve(Promise.reject('xyz'))
+});
+p.then(
+  function (r) {
+    console.log('resolve');
+  },
+  function(r) {
+    console.log(r);
+    console.log('reject')
+  }
+)
+// 'xyz'
+// reject
+```
+
+关于then/catch中的回调函数中的return:
+
+> return的值会由 Promise.resolve(return的返回值); 进行相应的包装处理，因此不管回调函数中会返回一个什么样的值，最终 then 的结果都是返回一个新创建的promise对象
+
+以上对catch的回调同样有效, 也就是说, 只要catch的回调中没有异常, 也没有return rejected promise, 那么catch返回的新promise将调用resolve回调.
+
+另外, 回调中异常(throw) 将导致promise reject.
+
+
+
 
 ---
 
