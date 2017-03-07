@@ -228,8 +228,11 @@ p.then(
 
 另外, 回调中异常(throw) 将导致promise reject.
 
+---
 
+2017.3.1 补充
 
+[异步与回调的设计哲学](http://fullstack.blog/2017/02/26/异步与回调的设计哲学)
 
 ---
 
