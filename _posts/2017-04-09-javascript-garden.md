@@ -156,7 +156,7 @@ function traceAccessor(target, attr) {
 
 1. 清除缓存, 以便require时可以重新加载:
 
-   `require.cache[a_module_path]`
+   `delete require.cache[a_module_path]`
 
 2. 手动构造缓存, 用于替换已经缓存的模块:
 
