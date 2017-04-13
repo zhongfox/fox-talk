@@ -38,7 +38,7 @@ subtitle: "Mocha, Assert, Chai, Sinon"
 
   如果promise pending, 测试一直会等待, 直到超时, 测试失败
 
-* 不能同时即使用done又使用promise:
+* 不能同时使用done又使用promise:
 
   ```javascript
   it('should complete this test', function (done) {
