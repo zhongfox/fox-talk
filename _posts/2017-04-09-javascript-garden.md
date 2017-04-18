@@ -2,11 +2,12 @@
 layout: post
 tags : [javascript, 调试, nodejs]
 title: Javascript 秘密花园
+header-img: img/pic/like/moraine_lake.jpg
 subtitle: "意外的收获"
 
 ---
 
-很多年前学习过[Javascript 秘密花园](https://bonsaiden.github.io/JavaScript-Garden/)当时被文中的「奇技淫巧」所折服. 最近在编写[Koa800](https://github.com/zhongfox/koa800)过程中实践了一下BDD, 顺便研究了一下nodejs中测试相关的类库的源码, 有一些意外的收获, 比如[Mocha](https://mochajs.org/)、[chai](http://chaijs.com/api/)、[sinon](http://sinonjs.org/)这些类库, 除了要实现相应功能, 还需要提供很好的可读性, 链式调用, DSL等体验, 因此它们的实现使用了一些平时编程不常用的javascript技巧, 这是我意外发现的一处「Javascript 秘密花园」.
+很多年前学习过[Javascript 秘密花园](https://bonsaiden.github.io/JavaScript-Garden/), 当时被文中的「奇技淫巧」所折服. 最近在编写[Koa800](https://github.com/zhongfox/koa800)过程中实践了一下BDD, 顺便研究了一下nodejs中测试相关的类库的源码, 有一些意外的收获, 比如[Mocha](https://mochajs.org/)、[chai](http://chaijs.com/api/)、[sinon](http://sinonjs.org/)这些类库, 除了要实现相应功能, 还需要提供很好的可读性, 链式调用, DSL等体验, 因此它们的实现使用了一些平时编程不常用的javascript技巧, 这是我意外发现的一处「Javascript 秘密花园」.
 
 ---
 
