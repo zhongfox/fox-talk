@@ -221,3 +221,6 @@ LC和thread对比:
 * <https://github.com/eventmachine/eventmachine/wiki/>
 * <http://blog.chinaunix.net/uid-298861-id-3251139.html>
 * <https://www.igvita.com/2008/05/27/ruby-eventmachine-the-speed-demon/>
+
+2017-6-15 补充
+* [http://www.itran.cc/2017/05/17/server-side-io-performance-node-php-java-go/](服务端I/O性能大比拼：Node、PHP、Java和Go)
