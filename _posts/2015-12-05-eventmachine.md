@@ -33,9 +33,9 @@ title: EventMachine
 
 * I/O复用
 
-  select，poll，epoll... 系统调用是阻塞的, 采用select函数有个好处就是它可以同时监听多个文件句柄（就绪的没有就绪的都有监听，epoll是select的替代方式，只监听就绪的文件句柄），从而提高系统的并发性！
+  select，poll，epoll... 系统调用是非阻塞 I/O, 但是select函数本身是阻塞的, 采用select函数有个好处就是它可以同时监听多个文件句柄（就绪的没有就绪的都有监听，epoll是select的替代方式，只监听就绪的文件句柄），从而提高系统的并发性！
 
-  (某些时候会理解为异步阻塞?)
+  (某些时候会理解为异步阻塞, 见 <https://www.ibm.com/developerworks/cn/linux/l-async/>)
 
 * 信号驱动式I/O（SIGIO）
 
