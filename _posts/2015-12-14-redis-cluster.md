@@ -142,7 +142,7 @@ slot 分配相关命令: `CLUSTER ADDSLOTS|DELSLOTS|SETSLOT`, 与此同时, 节�
 
 ### 多键操作
 
-借助`hash tags`, 可以实现多建操作
+借助`hash tags`, 可以实现多键操作
 
 不过如果在重新分片过程中, 原本属于一个solt的key分布于源节点和目的节点, 导致多键操作不可用, 此时集群会返回错误`TRYAGAIN`, 此时客户端可以在一段时间后重试, 或者上报错误
 
