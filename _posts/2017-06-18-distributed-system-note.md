@@ -7,13 +7,13 @@ title: 分布式系统浅析
 
 ## 分布式系统
 
-#### 目标:
+#### 目标
 
 * 提高系统伸缩性
 * 提高性能: 分布式意味着可以使用更多的计算机资源, 提高并发能力
 * 提高可扩展性
 
-#### 分布式带来的问题:
+#### 分布式带来的问题
 
 * 服务调用必须走网络
 * 分离粒度越小, 服务器越多, 服务宕机的概率也就越大
@@ -21,7 +21,7 @@ title: 分布式系统浅析
 
 分布式需要量力而行, 切莫为了分布式而分布式
 
-#### 分布式方案:
+#### 分布式系统场景
 
 * 分布式应用和服务
 * 分布式静态资源 [js css 多个域名, 独立静态资源域名]
@@ -111,7 +111,7 @@ title: 分布式系统浅析
 
 * 读扩展
 
-* 向量始终, WNR
+* 向量时钟, WNR
 
 * 事务
 
@@ -199,6 +199,12 @@ title: 分布式系统浅析
 
 <img src="/assets/images/distributed/node_partition_replication_es.png" />
 
+#### Auto Sharding
+
+<img src="/assets/images/distributed/auto_sharding_es.png" />
+
+<img src="/assets/images/distributed/auto_sharding_es_2.png" />
+
 #### 失效转移
 
 <img src="/assets/images/distributed/failover_es.png" />
@@ -223,8 +229,5 @@ mget:
 
 <img src="/assets/images/distributed/sync-es-bulk-write-es.png" />
 
+
 ---
-
-<img src="/assets/images/distributed/" />
-
-
