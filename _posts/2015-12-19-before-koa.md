@@ -234,6 +234,10 @@ p.then(
 
 [异步与回调的设计哲学](http://fullstack.blog/2017/02/26/异步与回调的设计哲学)
 
+2017.4.26 补充
+
+[Wait until all ES6 promises complete, even rejected promises](http://stackoverflow.com/questions/31424561/wait-until-all-es6-promises-complete-even-rejected-promises)
+
 ---
 
 ## 参考资料
