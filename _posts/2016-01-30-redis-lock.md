@@ -102,3 +102,7 @@ lua(原子性??):
 [分布式锁的实现](https://my.oschina.net/pingpangkuangmo/blog/747851)
 
 文章比较了mysql的悲观锁, redis setnx 以及zookeeper 来实现分布式锁的不同方式, 比较不错!
+
+2017-08-24 补充:
+
+[Redis在京东到家的订单中的使用](https://tech.imdada.cn/2017/06/30/daojia-redis/) 其中结合原子性的getset来实现分布式锁
