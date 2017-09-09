@@ -7,6 +7,13 @@ title: Redis 分布式锁
 
 利用Redis是单线程模型，命令操作原子性，可以很容易的实现分布式锁
 
+2种方式:
+
+* SETNX+EXPIRE(原子)
+* SETNX和GETSET(不用设置过期时间)
+
+锁如果需要频繁使用, 还应该主动delete, delete 需要确认delete自己加的锁.(lua脚本合并get和del)
+
 ---
 
 ## 加锁
@@ -106,3 +113,7 @@ lua(原子性??):
 2017-08-24 补充:
 
 [Redis在京东到家的订单中的使用](https://tech.imdada.cn/2017/06/30/daojia-redis/) 其中结合原子性的getset来实现分布式锁
+
+[分布式系统互斥性与幂等性问题的分析与解决](https://tech.meituan.com/distributed-system-mutually-exclusive-idempotence-cerberus-gtis.html)
+ 
+ 也讲到了使用getset来实现分布式锁
