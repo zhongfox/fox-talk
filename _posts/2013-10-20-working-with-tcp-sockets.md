@@ -7,6 +7,11 @@ title: 《Working with TCP Sockets》读书笔记
 
 <img src="/assets/images/tcp/tcp.png" />
 
+
+Socket是TCP/IP协议的API.
+
+TCP是网络协议, Socket是实现协议的一种技术。
+
 ---
 
 ### 前言

@@ -17,7 +17,7 @@ title: CouchBase
 
     (memcached没有持久化, redis 的持久化会造成系统间歇性的负载很高)
 
-    (题外话)惊群效应: 主要指资源竞争, 当你往一群鸽子中间扔一块食物，虽然最终只有一个鸽子抢到食物，但所有鸽子都会被惊动来争夺，没有抢到食物的鸽子只好回去继续睡觉， 等待下一块食物到来。这样，每扔一块食物，都会惊动所有的鸽子，即为惊群。对于操作系统来说，多个进程/线程在等待同一资源是，也会产生类似的效果，其结 果就是每当资源可用，所有的进程/线程都来竞争资源
+    (题外话)惊群效应: 主要指资源竞争, 当你往一群鸽子中间扔一块食物，虽然最终只有一个鸽子抢到食物，但所有鸽子都会被惊动来争夺，没有抢到食物的鸽子只好回去继续睡觉， 等待下一块食物到来。这样，每扔一块食物，都会惊动所有的鸽子，即为惊群。对于操作系统来说，多个进程/线程在等待同一资源时，也会产生类似的效果，其结果就是每当资源可用，所有的进程/线程都来竞争资源
 
 * CouchBase 特点:
 
@@ -28,7 +28,7 @@ title: CouchBase
     * 自动分片(auto-sharding of data across nodes): 以 vBucket 为单位的主从备份, 可以方便灵活的把数据的子集在不同节点上移动，以实现集群动态管理
     * 动态扩容: 增删节点很方便
   * 专业管理界面
-  * RESTAPI, 方便其他系统集成
+  * RESTAPI(貌似只能作为管理), 方便其他系统集成
   * Smart Client: 同步 vBucket 表, 在客户端实现负载均衡, 高效应对节点失效
 
 ---
@@ -55,8 +55,8 @@ title: CouchBase
   * 适应数量上的多样性: 嵌套文档(array)可多可少
 
 * 文档结构设计:
-  * 少量但是复杂的文档: 更好的扩展性(文档之间关系更少) 和性能(一次操作可以同时读写多个属性, 更好的原子性)以及更好的一致性
-  * 简单但是大量的文档: 如果读取方式都是可预见的少量读取, 简单文档应该优先, 可以减少网络传输
+  * 少量但是复杂的文档(单个文档, 嵌套复杂的文档): 更好的扩展性(文档之间关系更少) 和性能(一次操作可以同时读写多个属性, 更好的原子性)以及更好的一致性
+  * 简单但是大量的文档(多个简单文档): 如果读取方式都是可预见的少量读取, 简单文档应该优先, 可以减少网络传输
 
 * 支持JOIN操作
 
@@ -66,17 +66,17 @@ title: CouchBase
 
   KV store is an extremely simple, schema-less approach to data management
 
-
   V 可以是blob 或者 JSON, json会被N1QL和MapReduce使用
 
   提供 simple CRUD (Create, Read, Update, Delete) APIs, 都是原子性
 
   querying the KV store directly will always access the latest version of data
 
+  All KV operations are atomic
+
   * KV: 高效访问, 强一致性, 简单访问
   * N1QL: 丰富的查询接口, 最终一致 (貌似可以指定版本)
   * MapReduce: 最终一致
-
 
 * N1QL
 
@@ -89,6 +89,8 @@ title: CouchBase
   可以处理变量和嵌套结构
 
   处理json, 返回json格式给application
+
+  N1QL is generally used for secondary queries, it can also be used to retrieve documents by their primary keys (ID) (though it is recommended to use the key-value API if the ID is known)
 
 * MapReduce views
 
@@ -106,7 +108,9 @@ title: CouchBase
 
   replicas are primarily for the purpose of high availability and by default do not service any traffic until made active ??
 
-  关于P: 当一个node down, 在改node上的部分数据将不可写, 直到完成失效转移; 读一直可用, 因为有备份数据
+  复制vbucket默认不参与提供服务(不提供读写)
+
+  关于P: 当一个node down, 在该node上的部分数据将不可写, 直到完成失效转移; 读一直可用, 因为有备份数据
 
 * cross datacenter replication (XDCR): 跨多集群数据复制: 提高可用性
 
@@ -118,7 +122,7 @@ title: CouchBase
 
 * 索引是增量构建
 
-* 写操作是异步的, 当写入内存后, data manager就会发送ACK给客户端, 紧接着会把数据写入硬盘和备份集群以及索引队列
+* 写操作是异步的, 当写入内存后, data manager就会发送ACK给客户端, 紧接着会把数据写入**硬盘**和备份集群以及索引队列
 
   为了 increase tolerance to failures, 可以配置在以上操作都成功后再发送ACK, 会增加客户端延迟
 
@@ -139,9 +143,9 @@ title: CouchBase
 
 * cluster manager
 
-   configuring nodes, monitoring nodes, gathering statistics, logging, and controlling data rebalancing among cluster nodes. The cluster manager determines the node’s membership in a cluster, responds to heartbeat requests, monitors its own services and repairs itself if possible
+  configuring nodes, monitoring nodes, gathering statistics, logging, and controlling data rebalancing among cluster nodes. The cluster manager determines the node’s membership in a cluster, responds to heartbeat requests, monitors its own services and repairs itself if possible
 
-   在node中会选一个作为orchestrator: 维护权威的集群配置, 解决node交互的冲突, 当某node下线时通知其他node, 激活备份数据(failover)
+  在node中会选一个作为orchestrator: 维护权威的集群配置, 解决node交互的冲突, 当某node下线时通知其他node, 激活备份数据(failover)
 
   如果orchestrator下线, 集群将自动选出新的orchestrator
 
@@ -151,13 +155,13 @@ title: CouchBase
 
   构成: managed cache (based on memcached), a storage engine, and the view query engine
 
-* query service
+* index service
 
   维护(创建.删除)索引
 
   接收data service 数据变更后的通知, 更新索引
 
-* index service
+* query service
 
   处理N1QL查询解析, 优化和执行, index service需要和data service和query service交互, 然后将数据返回application
 
@@ -193,7 +197,7 @@ MDS示例:
 
 #### 1.1.5.3 Buckets and vBuckets
 
-* bucket 是逻辑上文档的聚合, 类似关系数据库中的database
+* bucket 是逻辑上文档的聚合, 类似关系数据库中的database (a unique key space)
 * application 直接和bucket交互, 一个bucket里可以有多种schemas
 * vBuckets类似一个数据分区的概念, auto-sharding将vBuckets分不到不同的nodes, vBuckets用于实现复制, 失效转移, 动态集群配置
 * 一个bucket分为1024个激活vBuckets和1024个复制vBuckets
@@ -297,6 +301,46 @@ MDS示例:
 ### 1.4.7 Services architecture and multidimensional scaling
 ### 1.4.8 Views, indexing, and index service
 
+查询方式:
+
+* kv访问: 直接访问data service
+* MapReduce views: 使用View API
+* Spatial views: 使用Spatial View API
+* N1QL查询: 使用Global Secondary Indexes (GSI) 和MapReduce views
+  N1QL can only utilize views created through CREATE INDEX ... USING VIEW statements
+
+多种索引类型:
+
+* Composite indexes
+* Covering indexes
+* Filtered indexes
+* Function-based indexes
+* Sub-document indexes
+* Incremental MapReduce views
+* Spatial views
+* Full Text indexes
+
+#### Global Secondary Index
+
+* 可以对整个bucket数据建立索引
+* 位于少数index node
+
+#### MapReduce views
+
+* 仅包括node本地数据的子集
+* 使用定义在couchbase文档中的 JavaScript map reduce functions
+* 增量构建, Views are built incrementally, re-indexing only the documents that have changed since the last index update. 
+
+#### Spatial views
+
+* 用于查询地理信息数据
+
+#### Full Text Index
+
+* 使用FTS API
+* 由 Full text service处理
+* full text indexes are independently distributed to a set of nodes across the cluster. Full text indexes can index one or more buckets data
+
 ### 1.4.9 Querying data and query data service
 
 * Retrieving data with document key
@@ -382,13 +426,35 @@ CRUD:
 
 ### 3.1.1 Accessing data from a command line
 
+cbc 可以处理非json数据, N1QL貌似只能处理json数据.
+
+使用文档: <https://github.com/couchbase/libcouchbase/blob/master/doc/cbc.markdown>
+
 * brew install libcouchbase
 
 * cbc create / cbc-create
 
+  `cbc create docid -V '{"json":"value"}' -M upsert -U couchbase://cluster-node/bucket-name`
+
   `-M  --mode  <upsert|insert|replace> Mode to use when storing [Default='upsert']`
 
   `cbc create --mode insert somekey < test.json`
+
+  示例:
+
+  ```
+  cbc cat airline_10 -U couchbase://127.0.0.1/travel-sample
+  airline_10           CAS=0x800f651284f0500, Flags=0x2000006. Size=120
+  {"id":10,"type":"airline","name":"40-Mile Air","iata":"Q5","icao":"MLA","callsign":"MILE-AIR","country":"United States"}
+
+  cbc create mytest -V 'abc'  -U couchbase://127.0.0.1/travel-sample
+  ```
+
+  文档更新其他常见参数:
+
+  * Expiry
+  * CAS
+  * Durability Requirements
 
 * cbc cat / cbc-cat
 
@@ -584,9 +650,41 @@ TODO
 
 ## 3.12 Batching operations
 
+利用网络管道, 减少网络IP包
+
+因为数据分散在各个node, SDK会只能拆分数据请求, 并行发起, 然后聚合.
+
+非事务, 可能部分失败部分成功
+
 ## 3.13 Reactive asynchronous clients
 
 ## 3.14 Dealing with non-JSON documents
+
+---
+
+### Working with Data
+
+* Couchbase does not automatically generate IDs for you, though you may use a separate counter to increment a serial number
+
+主要的KV操作:
+
+* upsert(docid, document) 无论该id存在与否, 都会写入
+* insert(docid, document) 只有在该id不存在, 才新建
+* replace(docid, document) 只有在该id存在, 才覆盖
+* get(docid)
+* remove(docid)
+
+#### 写入:
+
+写入/更新时可选设置:
+
+* 过期时间: 默认不过期, 可以通过Expiry/TTL进行设置
+* CAS
+* Durability Requirements
+
+
+get-and-touch : 允许读取同时更新过期时间
+
 
 ---
 

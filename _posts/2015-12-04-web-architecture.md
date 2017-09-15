@@ -625,3 +625,6 @@ HBASE TODO
 
 
 
+---
+
+2017-8-24 更新: <http://www.jianshu.com/p/bf431f8159bd>
