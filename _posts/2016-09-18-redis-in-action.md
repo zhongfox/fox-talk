@@ -2,7 +2,7 @@
 layout: post
 tags : [缓存, redis, nosql]
 title: Redis实战干货
-subtitle: "各种Redis实战技巧"
+subtitle: "重剑无锋，大巧不工"
 header-img: img/pic/2015/10/kanasi4.jpg
 
 ---
@@ -164,3 +164,12 @@ auto-aof-rewrite-percentage 100
 4. 如果事务失败, 表示很可能其他消费者已经先于当前消费者更新了数据. 这时候重新来过(乐观锁)
 
 ---
+
+### AOF定期重写会引起redis瓶颈
+
+[由Redis客户端连接数大小说开去](http://www.jianshu.com/p/549d4555ae16)
+
+解决思路是减少AOF重写的频率，两种方式:
+
+* 让Redis决定是否做AOF重写操作，根据auto-aof-rewrite-percentage和auto-aof-rewrite-min-size两个参数
+* 用crontab定时重写，命令是：BGREWRITEAOF
