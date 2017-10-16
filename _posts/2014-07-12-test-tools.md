@@ -150,6 +150,14 @@ NetCat，在网络工具中有“瑞士军刀”美誉
 
   `netstat -nat | grep 9530 |  wc -l`
 
+### 了解机器连接数情况
+
+* netstat -n | grep 1.2.3.4:22 | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+
+* netstat -lnpta | grep ssh | egrep 'TIME_WAIT | CLOSE_WAIT | ESTABLISHED'
+
+参考: [线上操作与线上问题排查实战](https://mp.weixin.qq.com/s/ZZp0H5vIBNu47KsiJOju2Q)
+
 ---
 
 ## lsof（list open files)

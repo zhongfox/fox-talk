@@ -393,6 +393,8 @@ title: Linux 笔记
 
   `ps -mp $pid ` 简略查看进程的线程数，每行一个线程
 
+  `ps -T -p <pid>` 输出 `PID  SPID TTY TIME CMD`
+
 * 键盘操作
 
   `ctrl + WhdK` 删除光标(之前所有，之前一个，之后一个，之后所有)
