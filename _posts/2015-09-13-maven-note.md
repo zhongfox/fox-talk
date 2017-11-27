@@ -105,7 +105,7 @@ title: Maven
 
   执行: `java -cp target/hello-nerd-1.0-SNAPSHOT.jar com.di.maven.App`
 
-  package 后的jar包并不包括`Main-Class`的声明, 所有无法使用`java -jar`执行, 需要使用`maven-shade-plugin`
+  package 后的jar包并不包括`Main-Class`的声明, 所以无法使用`java -jar`执行, 需要使用`maven-shade-plugin`
 
         <build>
           <plugins>
