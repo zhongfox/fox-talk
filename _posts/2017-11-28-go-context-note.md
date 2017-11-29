@@ -288,3 +288,4 @@ Context 的设计理念:
 2. 即使函数允许, 也不要传入nil的 Context. 如果不知道用哪种Context，可以使用context.TODO().
 3. 使用context的Value相关方法,只应该用于在程序和接口中传递和请求相关数据，不能用它来传递一些可选的参数
 4. 相同的 Context 可以传递给在不同的goroutine; Context 是并发安全的.
+
