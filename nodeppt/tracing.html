@@ -1,0 +1,312 @@
+<!--
+    Powered By nodeppt - This is probably the best web presentation tool so far!
+    version: 1.4.5
+    site: https://github.com/ksky521/nodeppt
+    date: 
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>全链路跟踪技术分享 - By 钟华</title>
+    <link rel="stylesheet" media="all" href="./css/nodeppt.css">
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="./css/phone.css">
+    
+    <link rel="stylesheet" href="./js/highlight/styles/monokai_sublime.css">
+    <link rel="stylesheet" href="./css/font-awesome.css">
+    
+<link rel="stylesheet" href="./css/theme.moon.css">
+</head>
+<body>
+<div class="slides">
+    <slides id="container">
+        <slide class="slide fill" style="background-image:url('https://zhongfox.github.io/assets/images/tracing/bg1.png')"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>全链路跟踪技术分享</h1>
+<h2>基于Opentracing 实现多语言全链路跟踪</h2>
+<p><small>By：foxzhong(钟华)</small></p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>分布式 微服务</h2>
+
+</hgroup><article>
+
+<img src="https://zhongfox.github.io/assets/images/tracing/microservice.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>如何提高系统的可观测性?</h2>
+
+</hgroup><article>
+
+<ul class="rollIn">
+<li>Logging</li>
+<li>Metric monitoring</li>
+<li>Distributed Tracing</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"   data-on-build="Slide.magic" data-on-enter="Slide.magic.init"><section class="slide-wrapper"><div class="magic"><div class="magicItem current pagedown"  data-transition="glue"><article>
+<div class="magic-wrapper">
+<article>
+<h2>What is a Trace?</h2>
+<img src="https://zhongfox.github.io/assets/images/hunter/opentracing_1.png" alt="">
+
+</article>
+</div>
+</article></div>
+<div class="magicItem next pagedown"  data-transition="glue"><article>
+<div class="magic-wrapper">
+<article>
+<img src="https://zhongfox.github.io/assets/images/hunter/opentracing_2.png" alt="">
+
+</article>
+</div>
+</article></div></div></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>应用场景</h2>
+<ul>
+<li>监控告警</li>
+<li>瓶颈查询, 链路优化</li>
+<li>数据透明传输</li>
+<li>个例分析, 跟踪反查</li>
+<li>异常log绑定</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>瓶颈查询, 链路优化</h3>
+<img src="https://zhongfox.github.io/assets/images/hunter/hunter_ui_1.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>数据透明传输</h3>
+<img src="https://zhongfox.github.io/assets/images/hunter/baggage.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>跟踪反查</h3>
+<img src="https://zhongfox.github.io/assets/images/hunter/hunter_id.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>生态圈</h2>
+<ul>
+<li>Dapper</li>
+<li>Zipkin</li>
+<li>HTrace</li>
+<li>X-Trace</li>
+<li>EagleEye</li>
+<li>MTrace</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>Opentracing</h2>
+<blockquote class="pull-right">
+<p>A vendor-neutral open standard for distributed tracing
+<a href="http://opentracing.io/" target="_blank">http://opentracing.io/</a></p>
+</blockquote>
+<ul>
+<li><a href="https://www.cncf.io/blog/2016/10/11/opentracing-joins-the-cloud-native-computing-foundation/" target="_blank">CNCF 项目</a></li>
+<li>提供平台无关、厂商无关的API</li>
+<li><a href="http://opentracing.io/documentation/pages/api/api-implementations.html" target="_blank">多语言支持</a></li>
+<li>跨进程跟踪标准化</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>OpenTracing Data Model</h2>
+<ul>
+<li>Span</li>
+<li>SpanContext</li>
+<li>Trace</li>
+<li>Baggage</li>
+<li>Tag</li>
+<li>Log</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>OpenTracing Data Model</h2>
+<div class="columns2">
+  <img src="https://zhongfox.github.io/assets/images/hunter/opentracing_1.png" height="100%%">
+  <img src="https://zhongfox.github.io/assets/images/hunter/span.png" height="100%">
+</div>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>核心技术</h2>
+<ul>
+<li>跟踪注入<ul>
+<li>显示传递</li>
+<li>Monkeypatching</li>
+<li>Decorator</li>
+</ul>
+</li>
+<li>跟踪传递<ul>
+<li>应用内部传递</li>
+<li>RPC 间的传递</li>
+</ul>
+</li>
+<li>性能<ul>
+<li>采样率控制</li>
+<li>日志 vs Agent</li>
+</ul>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>跟踪注入: Monkeypatching</h3>
+<div class="columns-1"><pre><code class="ruby"># Ruby Demo
+
+# 跟踪目标API
+def do_http
+  puts "do http ......"
+end
+
+# 跟踪 client 采用Ruby提供的命名环绕
+# 对旧的API进行跟踪功能扩展
+alias :original_do_http :do_http
+
+def do_http
+  puts "#{Time.now} start tracing..."
+  original_do_http
+  puts "#{Time.now} end tracing..."
+end
+
+# 业务代码的调用方式和以前保持不变
+do_http
+
+# Output:
+# 2018-03-10 21:13:40 start tracing...
+# do http ......
+# 2018-03-11 21:13:51 end tracing...</code></pre>
+</div>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>跟踪注入: Decorator</h2>
+<img src="https://zhongfox.github.io/assets/images/hunter/koa_2.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>跟踪传递</h2>
+<ul>
+<li><p>应用内部跟踪数据维护</p>
+<ul>
+<li>Java: ThreadLocal</li>
+<li>Golang: Context</li>
+<li>Node.js: <a href="https://github.com/othiym23/node-continuation-local-storage" target="_blank">Continuation-Local Storage</a> <a href="https://nodejs.org/api/async_hooks.html" target="_blank">Async Hooks</a></li>
+</ul>
+</li>
+<li><p>RPC 间的传递</p>
+<ul>
+<li>Http: Header</li>
+<li>Thrift: Parameter</li>
+</ul>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>实现案例</h2>
+<ul>
+<li><p><a href="https://github.com/jaegertracing/jaeger" target="_blank">Jaeger</a></p>
+<ul>
+<li><a href="https://www.cncf.io/blog/2017/09/13/cncf-hosts-jaeger/" target="_blank">CNCF 项目</a></li>
+<li><a href="https://eng.uber.com/distributed-tracing/" target="_blank">Uber的分布式追踪演进</a></li>
+</ul>
+</li>
+<li><p>查看更多: <a href="http://opentracing.io/documentation/pages/supported-tracers.html" target="_blank">Supported Tracer Implementations</a></p>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>Jaeger</h2>
+<img src="https://jaeger.readthedocs.io/en/latest/images/architecture.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h1>谢谢 Q&amp;A</h1>
+
+</hgroup><article>
+
+<img src="https://zhongfox.github.io/assets/images/hunter/trace_net_61.png" alt="">
+
+</article></section></slide>
+        
+
+        <!-- <slide class="slide logoslide dark nobackground">
+            <article class="flexbox vcenter">
+                <h2 style="color: white;">Powered By nodeppt v1.4.5</h2>
+            </article>
+        </slide> -->
+        <div class="slideTip" id="tip"></div>
+    </slides>
+</div>
+<canvas id="drawBoard" class="draw-board" width="900" height="700"></canvas>
+<div class="progress"><span id="progress"></span></div>
+<div id="_buttons">
+    <div class="_btn-box" id="_btn-box" style="display:none;">
+        <button class="fa fa-arrow-circle-left" id="_btn-prev"></button>
+        <button class="fa fa-arrow-circle-right" id="_btn-next"></button>
+        <button class="fa fa-paint-brush" id="_btn-brush"></button>
+        <button class="fa fa-compress" id="_btn-overview" data-toggle="fa fa-expand"></button>
+    </div>
+    <button class="fa fa-bars" id="_btn-bar"  data-toggle="fa fa-close"></button>
+</div>
+<script src="./js/mixjs/lib/mix.0.3.0.min.js"></script>
+<script>
+    var ASSET_RELATIVE_DIR = ".";
+</script>
+<script>
+var base = location.protocol + '//' + location.host;
+
+var path = (location.pathname + '#').split('/').filter(function(v){
+    return !!v;
+});
+path.pop();
+path = path.join('/');
+if (typeof ASSET_RELATIVE_DIR === 'string') {
+    path = path + '/' + ASSET_RELATIVE_DIR;
+}
+MixJS.config({
+    baseURL: [ base, path, 'js'].join('/')+'/'
+});
+
+</script>
+<script src="./js/mixjs/lib/event/broadcast.js"></script>
+<script src="./js/nodeppt.js"></script>
+<script>
+Slide.init({
+    containerID: 'container',
+    drawBoardID: 'drawBoard',
+    slideClass: '.slide',
+    buildClass: '.build',
+    progressID: 'progress',
+    transition: 'move',
+    width: 1100,
+    dir: './',
+    
+    //打开下面的注释就开启postMessage方式
+    //访问网址127.0.0.1:8080/ppt/demo#client
+    control:{
+        type: 'postMessage',
+        args:{
+            isControl:  false
+        }
+    },
+    
+    tipID: 'tip'
+});
+MixJS.loadJS('highlight/highlight.pack.js',function(){
+    hljs.tabReplace = '  ';
+    hljs.initHighlightingOnLoad();
+});
+</script>
+
+
+<!--placeholder-->
+</body>
+</html>

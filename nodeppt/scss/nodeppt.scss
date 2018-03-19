@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import url(http://fonts.useso.com/css?family=Source%20Code%20Pro:light,regular,semibold);
+@import "fonts";
 @import "base";
 @import "compass/css3/columns";
 @import "compass/css3/user-interface";
@@ -148,6 +148,7 @@ slides > slide .slide-wrapper {
     em {
         margin: 0 5px;
         font-weight: bold;
+        font-style: italic;
         @include text-shadow(-1px -2px 1px rgba(0, 0, 0, .8));
     }
     pre {
@@ -158,9 +159,14 @@ slides > slide .slide-wrapper {
     }
 }
 
-
-
-slides > slide {
+slides > slide .magic{
+    // visibility: hidden;
+    width: 100%;
+    height: 100%;
+    // overflow: hidden;
+    position: relative;
+}
+slides > slide, .magic > .magicItem {
     display: none;
     font-size: 26px;
     color: $font-color;
@@ -250,6 +256,39 @@ slides > slide {
             color: $note-color;
             @include text-shadow(none);
         }
+    }
+}
+.magic > .magicItem > * {
+    display: table-cell;
+    vertical-align: middle;
+}
+.magic>.magicItem{
+    padding: 0;
+    display: table;
+    background-color: transparent;
+    &:nth-child(6n+1),
+    &:nth-child(6n+2),
+    &:nth-child(6n+3),
+    &:nth-child(6n+4),
+    &:nth-child(6n+5) {
+        background-color: transparent;
+    }
+    &.far-past {
+        display: none;
+    }
+    &.past {
+        display: table;
+        opacity: 0;
+    }
+    &.current {
+        display: table;
+    }
+    &.next {
+        display: table;
+        opacity: 0;
+    }
+    &.far-next {
+        display: none;
     }
 }
 // Code highlighting only effects the current slide.
