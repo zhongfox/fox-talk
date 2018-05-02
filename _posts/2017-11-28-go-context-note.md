@@ -137,7 +137,7 @@ func (c *cancelCtx) Err() error {
 }
 ```
 
-cancelCtx 有一个私有方法cancel, 此方法在WithCancel()的返回CancelFunc会被调用. cancel内部主要是去close 自己的done, 并且取掉自己下级(children)的context.
+cancelCtx 有一个私有方法cancel, 此方法在WithCancel()的返回CancelFunc会被调用. cancel内部主要是去close 自己的done, 并且取消自己下级(children)的context.
 
 
 ```go
