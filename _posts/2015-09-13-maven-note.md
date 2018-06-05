@@ -151,7 +151,7 @@ title: Maven
   mvn exec命令可以执行项目中的main函数。
 
   * 首先需要编译java工程：mvn compile
-  * 不存在参数的情况下：`mvn exec:java -Dexec.mainClass="***.Main"`
+  * 不存在参数的情况下：`mvn exec:java -Dexec.mainClass="io.github.zhongfox.App"`
   * 存在参数：`mvn exec:java -Dexec.mainClass="***.Main" -Dexec.args="arg0 arg1 arg2"`
   * 指定运行时库：`mvn exec:java -Dexec.mainClass="***.Main" -Dexec.classpathScope=runtime`
 
