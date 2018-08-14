@@ -471,3 +471,12 @@ title: Linux 笔记
   l 多进程的（使用 CLONE_THREAD, 类似 NPTL pthreads）；
   + 位于后台的进程组；
   ```
+
+---
+
+bash 中 `set -ex`:
+
+* e:  it exits as soon as any line in the bash script fails, 也就可以省略连接script的&&
+* x:  it prints each command that is going to be executed with a little plus
+
+
