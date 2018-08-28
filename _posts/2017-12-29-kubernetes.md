@@ -34,6 +34,52 @@ kubectl get deployments
 * 指定 Container’s limit, 没指定Container’s request: request 和 limit 相同
 
 
+
+---
+
+crt to client-certificate-data: 进行base64编码
+
+`cat flowtest.crt | base64`
+
+
+查看证书: `openssl x509 -in ./flowtest.crt -text`
+
+
+数字证书中主题(Subject)中字段的含义
+
+公用名称 (Common Name) 简称：CN 字段，对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端证书则为证书申请者的姓名；
+单位名称 (Organization Name) ：简称：O 字段，对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端单位证书则为证书申请者所在单位名称；
+
+
+---
+
+在Kubernetes中，授权有
+
+* ABAC（基于属性的访问控制）
+* RBAC（基于角色的访问控制）
+* Webhook
+* Node
+* AlwaysDeny（一直拒绝）
+* AlwaysAllow（一直允许）
+
+## RBAC
+
+### 角色和集群角色
+
+在RBAC API中，角色包含代表权限集合的规则。在这里，权限只有被授予，而没有被拒绝的设置
+
+* Role: 被用来授予访问单一命令空间中的资源
+* ClusterRole: 定义集群范围的角色 
+
+### 角色绑定和集群角色绑定
+
+角色绑定用于将角色与一个或一组用户进行绑定，从而实现将对用户进行授权的目的。主体分为用户、组和服务帐户
+
+角色绑定也分为角色普通角色绑定和集群角色绑定
+
+* RoleBinding: 角色绑定只能引用同一个命名空间下的角色
+*
+
 ---
 
 ## Helm
