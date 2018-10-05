@@ -102,9 +102,17 @@ title: Linux 笔记
 
     `du -hs 目录名` 目录大小
 
+  * inode: 存储 Inumber, 其他信息还有创建时间（ctime）、修改时间(mtime) 、文件大小、属主、归属的用户组、读写权限、数据所在block号等信息
+
+    目录下的文件名和对应的inode是记录在目录本身inode对应的数据block中.
+
+    <img src="/assets/images/linux/inode.jpg" />
+
   * 硬链接：共享inode和对应的block，不能跨越文件系统，不能链接目录：`ln 原文件 目标文件`
 
   * 软连接：有不同的inode和不同的block，链接目标文件的文件block存的是原文件的文件名，根据文件名再链接到原文件的inode和文件：`ln -s 原文件 目标文件` 可以链接目录
+
+    <img src="/assets/images/linux/linkfile.jpg" />
 
 * 压缩
 

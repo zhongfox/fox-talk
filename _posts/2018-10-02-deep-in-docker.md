@@ -323,6 +323,18 @@ docker 镜像的特点:
 
 TODO
 
+### 容器读写层层创建过程
+
+1. 随机生成容器层的mountID, 持久化到`image/aufs/layerdb/mounts/{container_id}/mount_id` 中
+2. 分别在mnt和diff目录中创建mountID同名的子文件夹
+3. 在layers目录中创建mountID同名的文件, 记录该层所依赖的其他层(mountID ? cacheID?)
+4. 将diff中属于该容器镜像的所有层目录以只读的方式挂载到mnt下
+5. 在diff目录中生成一个`<mountID>init`命名的目录, 作为最后一层只读层, 并进行挂载
+6. 以mountID为名称的可读写层, 挂载到mnt下, 该层实际内容保存到diff下
+
+init 层的目的: int层中文件与容器环境相关, 但不适合作为镜像文件, 因为这和具体容器特有
+
+
 ### 目录结构
 
 ```
@@ -417,3 +429,51 @@ $ sudo tree . -L 3
     └── metadata.db
 ```
 
+---
+
+## 4. Volume
+
+
+默认目录: `/var/lib/docker/volumes`
+
+如果容器中目标目录中存在数据, 将会被隐藏掉
+
+```
+docker volume create --name fox0
+
+docker run -d \
+  -v fox0:/data0 \                  # 挂载已存在的volume "Mounts.Type": "volume"
+  -v fox1:/data1 \                  # 创建新volume并挂载 "Mounts.Type": "volume"
+  -v /tmp/fox2:/data2 \             # 使用host path 挂载 (没有创建volume) "Mounts.Type": "bind"
+  -v /data3 \                       # 创建随机命名volume并挂载 "Mounts.Type": "volume"
+  -v /etc/hosts:/test_hosts \       # 使用host path file(必须存在) 挂载文件 (没有创建volume) "Mounts.Type": "bind"
+  nginx
+
+docker volume ls
+DRIVER              VOLUME NAME
+local               aa1087f9c83e16591914025b41e4488ad9b957736c99939c37338871b9c1c3a3
+local               fox0
+local               fox1
+```
+
+### 在dockerfile中添加volume
+
+`VOLUME ["/data1", "/data2"]`
+
+VOLUME 指令不能挂载主机中的目录和文件, 这是为了保证dockerfile可移植性
+
+在dockerfile中, VOLUME 指令后对卷内容的修改无效, 可以将修改操作放到VOLUME指令之前, 卷的内容可以保留
+
+### Mount
+
+Docker 使用的volume挂载方式是`bind mount`
+
+关于mount:
+
+`--bind` mount --bind命令和硬连接很像，硬链接连接到同一个inode上面，只不过hard link无法连接目录，而mount --bind命令可以, 区别:
+
+* 目标目录内容是被隐藏, 而不是删除
+* mount --bind连接的两个目录的inode号码并不一样，只是被挂载目录的block被屏蔽掉，inode被重定向到挂载目录的inode（被挂载目录的inode和block依然没变）
+* 两个目录的对应关系存在于内存里，一旦重启挂载关系就不存在了
+
+`--rbind` 参数: TOOD
