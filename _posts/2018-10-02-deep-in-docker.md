@@ -477,3 +477,23 @@ Docker 使用的volume挂载方式是`bind mount`
 * 两个目录的对应关系存在于内存里，一旦重启挂载关系就不存在了
 
 `--rbind` 参数: TOOD
+
+---
+
+## 5. Docker Network
+
+libnetwork 使用了 CNM(container network model), CNM 定义了容器虚拟化网络的模型:
+
+* sandbox: 一个沙盒包括一个容器网络栈信息, 可以对容器的接口, 路由, DNS等进行管理, 沙盒实现: 如 linux namespace
+* endpoint: 一个端点可以加入一个沙盒和一个网络, 端点实现: 如 veth pair, Open vSwitch内部端口等, 一个端点只能属于一个网络和沙盒
+* network: 一组可以直联互通的端点. 实现如linux bridge, Vlan等
+
+libnetwork 内置5中驱动:
+
+* bridge
+* host: 不会为容器创建网络协议栈, 即不创建新的network namespace, 容器进程共享宿主机网络环境
+* overlay: 使用VXLAN 方式, 需要配置额外存储, 如Consul, etcd或者zk等
+* remote
+* null: 容器拥有自己的network namespace, 但并不为容器进行任何网络配置
+
+`/var/lib/docker/containers/{container_id}/` todo
