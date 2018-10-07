@@ -1,7 +1,7 @@
 ---
 layout: post
 tags : [docker, linux]
-title: 深入理解Docker
+title: 深入理解Docker容器技术
 
 ---
 
@@ -490,8 +490,8 @@ libnetwork 使用了 CNM(container network model), CNM 定义了容器虚拟化�
 
 libnetwork 内置5中驱动:
 
-* bridge
 * host: 不会为容器创建网络协议栈, 即不创建新的network namespace, 容器进程共享宿主机网络环境
+* bridge: 通过nat实现对外通信, 不能解决跨主机容器通信问题
 * overlay: 使用VXLAN 方式, 需要配置额外存储, 如Consul, etcd或者zk等
 * remote
 * null: 容器拥有自己的network namespace, 但并不为容器进行任何网络配置
@@ -499,8 +499,7 @@ libnetwork 内置5中驱动:
 
 ### Bridge 驱动实现
 
-
-启动2个docker后的宿主机器
+宿主机上启动2个docker容器做测试:
 
 `sudo docker run -it ubuntu /bin/bash`
 `sudo docker run -p 4000:3000 ccr.ccs.tencentyun.com/fox-test/node-koa-demo:tag4`
@@ -620,6 +619,68 @@ Address                  HWtype  HWaddress           Flags Mask            Iface
 172.17.0.3               ether   02:42:ac:11:00:03   C                     eth0
 172.17.0.1               ether   02:42:96:ae:f2:53   C                     eth0
 ```
+
+### 容器DNS和主机名
+
+以下三个文件在容器启动后被虚拟文件覆盖(init 层):
+
+* `/etc/hosts`
+* `/etc/resolv.conf`
+* `/etc/hostname`
+
+### DIY容器网络
+
+目标: 容器网络和宿主机处于同一网络
+
+1. 启动容器, 网络选择none
+
+  `docker run -itd --name test1 --net=none ubuntu bash`
+
+2. 手动创建网桥, 并启动
+
+   `brctl addbr foxbr0`
+
+   `ip link set foxbr0 up`
+
+4. 将主机eth0的ip地址给网桥foxbr0, eth0 的地址给网桥
+
+   ```
+   ip addr add {ip1/24} dev foxbr0
+   ip addr del {ip1/24} dev eth0
+
+   brctl addif foxbr0 eth0
+   ip route del default
+   ip route add default via {宿主机网络默认网关} dev foxbr0
+   ```
+5. 找到容器network namespace
+
+   `ln -s /proc/{容器id}/ns/net /var/run/netns/test1ns`
+
+   `ip netns exec test1ns ip link` 在容器网络namespace中执行命令
+
+6. 创建设备对, 一端放在容器里, 一端放入网桥
+
+   ```
+   ip link add veth-a type veth peer name veth-b
+   brctl addif foxbr0 veth-a        # A端加入网桥
+   ip link set veth-a up
+
+   ip link set veth-b netns test1ns # B端加入容器网络
+   ```
+
+7. 在容器网络namespace中, 配置veth-b
+
+   ```
+   ip netms exec tset1ns ip link set dev veth-b name eth0 # 网卡重命名
+   ip netms exec tset1ns ip link set eth0 up
+   ip netms exec tset1ns ip link add {ip2/24} dev eth0
+   ip netms exec tset1ns ip route add default via {宿主机默认网关}
+   ```
+---
+
+## 6. 容器安全
+
+TODO
 
 ---
 
