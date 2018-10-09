@@ -85,8 +85,6 @@ lrwxrwxrwx 1 root root 0 Oct  2 13:17 uts -> uts:[4026532471]
 * 操作单元可以细粒度到线程级别
 
 
-Docker 相关Cgroup文件:
-
 #### CPU
 
 `/sys/fs/cgroup/cpu/docker/<容器的完整ID>/`
