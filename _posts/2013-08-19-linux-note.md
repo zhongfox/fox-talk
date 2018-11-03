@@ -309,6 +309,8 @@ title: Linux 笔记
 
     -l 按行数切割 `ls -al / | split -l 10 - listbackup` **注意最后一个-, 可以代表标准输入或者输出**
 
+  [我们天天都在使用的管道命令，Shell 在里面到底动了什么手脚？](https://mp.weixin.qq.com/s/9oPSSlIuHhcKWw-QckGUcg)
+
 * `mail username@host`: 如果是localhost，host可以省略，会让你输入subject和正文，换行输入点号结束。
 
   收邮件`mail` `N`表示未读邮件
