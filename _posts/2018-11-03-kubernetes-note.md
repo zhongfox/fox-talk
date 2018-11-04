@@ -154,7 +154,7 @@ TODO
 * `system:serviceaccounts:mynamespace` 命名空间 mynamespace 下所有的SA
 * `system:serviceaccounts` 系统中所有的SA
 
---
+---
 
 ## 2. RBAC
 
@@ -235,7 +235,7 @@ subjects.kind 取值:
 
 ### 3.1 声明式API
 
-* 命令式: kubectl create,  kubectl replace 
+* 命令式: kubectl create,  kubectl replace
 * 声明式: kubectl apply
 
 声明式API的特点:
@@ -351,4 +351,131 @@ Istio中每个Pod里, 有一个以 sidecar 运行的Envoy容器, 实现方式:
    ```
 5. 当在 Initializer 里完成了要做的操作后，一定要记得将这个 metadata.initializers.pending 标志清除掉
 
+---
+
+K8s 编排对象可以分为两大类:
+
+1. 在线业务/Long Running Task: Deployment, StatefulSet, DaemonSet
+2. 离线业务/ Batch Job: Job
+
+## 6. 离线业务
+
+### 6.1 Job
+
+Job Controller 控制的对象，直接就是 Pod, (spec.template)
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  parallelism: 2
+  completions: 4
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: resouer/ubuntu-bc
+        command: ["sh", "-c", "echo 'scale=10000; 4*a(1)' | bc -l "]
+      restartPolicy: Never
+  backoffLimit: 4
+```
+
+
+Job 对 Pod 的控制:
+
+* Pod template, 被自动加上了一个 `controller-uid=< 一个随机字符串 >`这样的 Label
+* Job.Selector, 同样设置了上述label用于定位pod
+
+Job 对Pod的调谐过程:
+
+* 需要创建的 Pod 数目 = 最终需要的 Pod 数目 - 实际在 Running 状态 Pod 数目 - 已经成功退出的 Pod 数目
+* 单时创建的 Pod 数目受到并行度(spec.parallelism)的限制
+
+#### 6.1.1 失败控制: restartPolicy
+
+在 Job 对象里只允许被设置为 Never 或者 OnFailure
+
+* `restartPolicy=Never`: job失败会导致不断地尝试创建一个新 Pod, 重试上限是 Job 对象的 spec.backoffLimit(默认值是 6)
+
+  新创建 Pod 的间隔是呈指数增加的，即下一次重新创建 Pod 的动作会分别发生在 10 s、20 s、40 s …后
+
+* restartPolicy=OnFailure: Job 失败不会重新创建pod, 但会不断地尝试重启 Pod 里的容器
+
+#### 6.1.2 失败控制: spec.activeDeadlineSeconds
+
+设置最长运行时间, 超时后对应 Pod 都会被终止。并且可以在 Pod 的状态里看到终止的原因是 reason: DeadlineExceeded
+
+#### 6.1.3 并行控制
+
+* spec.parallelism: 它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
+
+* spec.completions: 它定义的是 Job 至少要完成的 Pod 数目，即 Job 的最小完成数
+
+Job 状态表:
+
+```
+$ kubectl get job
+NAME      DESIRED   SUCCESSFUL   AGE
+pi        4         0            3s
+```
+
+* DESIRED: 对应 spec.completions
+* SUCCESSFUL: 成功完成的pod数量
+
+### 6.2 CronJob
+
+CronJob 是一个 Job 对象的控制器（定义中的jobTemplate）
+
+```
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: busybox
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+```
+
+schedule: 标准的Unix Cron格式的表达式
+
+CronJob 状态表:
+
+```
+$ kubectl get cronjob hello
+NAME      SCHEDULE      SUSPEND   ACTIVE    LAST-SCHEDULE
+hello     */1 * * * *   False     0         Thu, 6 Sep 2018 14:34:00 -070
+```
+
+#### 6.2.1 并行控制:
+
+某个 Job 还没有执行完，按照调度新 Job 将被创建时, 是否允许并行由`concurrencyPolicy` 来控制:
+
+* concurrencyPolicy=Allow，这也是默认情况，这意味着这些 Job 可以同时存在
+* concurrencyPolicy=Forbid，这意味着不会创建新的 Pod，该创建周期被跳过
+* concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没有执行完的 Job
+
+#### 6.2.2 失败控制
+
+如果某一次 Job 创建失败，这次创建就会被标记为“miss”。当在指定的时间窗口内，miss 的数目达到失败上限100时，那么 CronJob 会停止再创建这个 Job
+
+时间窗口: spec.startingDeadlineSeconds 字段指定
+
+---
+
+## Deployment
+
+TODO
 
