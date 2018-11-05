@@ -111,38 +111,14 @@ Volumes:
 
 ### 1.3 外部用户
 
-`kube-apiserver` 的启动参数中用户相关的认证配置:
+K8s 可以从支持的认证中获取用户和组:
 
-#### 1.3.1 基本认证：basic-auth
+* 基本认证：basic-auth
+* Token认证：token-auth
+* OpenID Connect Tokens 认证
 
-`--basic-auth-file=/etc/kubernetes/basic_auth.csv`
+见 API Server 认证
 
-格式为password，username，uid
-
-```
- # cat /etc/kubernetes/basic_auth.csv
-FM7fhRM4NUg2j0fssXf1OMolALtPpMka,admin,admin,system:masters
-```
-
-认证方式: 在http请求的header中添加一个Authorization，value是Basic base64编码后的用户名密码信息
-
-
-#### 1.3.2 Token认证：token-auth
-
-`--token-auth-file=/etc/kubernetes/known_tokens.csv`
-
-格式为token，username，uid
-
-```
-# cat /etc/kubernetes/known_tokens.csv
-FM7fhRM4NUg2j0fssXf1OMolALtPpMka,admin,admin,system:masters
-DBMmLEwHROlO4Ront5lw7GcaKMkEqtud,kubelet,kubelet,system:masters
-```
-认证方式: header中添加Authorization，value是Bearer token
-
-#### 1.3.3 CA证书认证
-
-TODO
 
 ### 1.4 用户组
 
@@ -291,6 +267,66 @@ spec:
     plural: networks
   scope: Namespaced
 ```
+
+### 3.4 API Server 认证
+
+#### 1.3.1 CA证书认证
+
+apiserver 启动参数配置:
+
+* `--client-ca-file=/etc/kubernetes/cluster-ca.crt` 指定根证书地址
+* `--tls-cert-file=/etc/kubernetes/ssl/kubernetes.pem` 指定kube-apiserver证书地址
+* `--tls-private-key-file=/etc/kubernetes/ssl/kubernetes-key.pem` 指定kube-apiserver私钥地址
+
+客户端 kubectl 访问配置:
+
+证书认证配置:
+
+* `kubectl config --kubeconfig=配置文件名 set-cluster 集群命名 --server=https://1.2.3.4 --certificate-authority=证书地址` 集群的根证书路径??? TODO
+* `kubectl config --kubeconfig=config-demo set-cluster 集群命名 --server=https://5.6.7.8 --insecure-skip-tls-verify`
+
+
+用户鉴权配置:
+
+* `kubectl config --kubeconfig=配置文件名 set-credentials 集群命名 --client-certificate=客户端证书?? --client-key=客户端私钥` 双向认证????
+* `kubectl config --kubeconfig=配置文件名 set-credentials 集群命名 --username=用户名 --password=密码`
+
+#### 1.3.2 基本认证：basic-auth
+
+`--basic-auth-file=/etc/kubernetes/basic_auth.csv`
+
+格式为`password，username，uid, 可选的组名`, 如果有多个组，则列必须是双引号
+
+```
+ # cat /etc/kubernetes/basic_auth.csv
+FM7fhRM4NUg2j0fssXf1OMolALtPpMka,admin,admin,system:masters
+```
+
+认证方式: 在http请求的header中添加一个Authorization，value是Basic base64编码后的用户名密码信息
+
+`Authorization: BasicBASE64ENCODED(USER:PASSWORD) `
+
+#### 1.3.3 Token认证：token-auth
+
+`--token-auth-file=/etc/kubernetes/known_tokens.csv`
+
+格式为`token，username，uid, 可选的组名`, 如果有多个组，则列必须是双引号
+
+bearer token必须是，可以放在HTTP请求头中且值不需要转码和引用的一个字符串
+
+```
+# cat /etc/kubernetes/known_tokens.csv
+FM7fhRM4NUg2j0fssXf1OMolALtPpMka,admin,admin,system:masters
+DBMmLEwHROlO4Ront5lw7GcaKMkEqtud,kubelet,kubelet,system:masters
+```
+认证方式: header中添加Authorization，value是Bearer token
+
+`Authorization: Bearer 31ada4fd-adec-460c-809a-9e56ceb75269`
+
+#### 1.3.4 OpenID Connect Tokens 认证
+
+TODO
+
 
 ---
 
