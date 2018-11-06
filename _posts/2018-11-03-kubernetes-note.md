@@ -268,9 +268,11 @@ spec:
   scope: Namespaced
 ```
 
-### 3.4 API Server 认证
+---
 
-#### 1.3.1 CA证书认证
+## 4 API Server 认证
+
+### 4.1 CA证书认证
 
 apiserver 启动参数配置:
 
@@ -291,7 +293,7 @@ apiserver 启动参数配置:
 * `kubectl config --kubeconfig=配置文件名 set-credentials 集群命名 --client-certificate=客户端证书?? --client-key=客户端私钥` 双向认证????
 * `kubectl config --kubeconfig=配置文件名 set-credentials 集群命名 --username=用户名 --password=密码`
 
-#### 1.3.2 基本认证：basic-auth
+### 4.2 基本认证：basic-auth
 
 `--basic-auth-file=/etc/kubernetes/basic_auth.csv`
 
@@ -306,7 +308,7 @@ FM7fhRM4NUg2j0fssXf1OMolALtPpMka,admin,admin,system:masters
 
 `Authorization: BasicBASE64ENCODED(USER:PASSWORD) `
 
-#### 1.3.3 Token认证：token-auth
+### 4.3 Token认证：token-auth
 
 `--token-auth-file=/etc/kubernetes/known_tokens.csv`
 
@@ -323,14 +325,14 @@ DBMmLEwHROlO4Ront5lw7GcaKMkEqtud,kubelet,kubelet,system:masters
 
 `Authorization: Bearer 31ada4fd-adec-460c-809a-9e56ceb75269`
 
-#### 1.3.4 OpenID Connect Tokens 认证
+### 4.4 OpenID Connect Tokens 认证
 
 TODO
 
 
 ---
 
-## 4. 控制器模型
+## 5. 控制器模型
 
 控制循环: 死循环, 它不断地获取“实际状态”，然后与“期望状态”作对比，并以此为依据决定下一步的操作
 
@@ -359,18 +361,18 @@ Deployment 以及其他类似的控制器, 定义主要分为2部分:
 
 ---
 
-## 5. Admission Controller
+## 6. Admission Controller
 
 一个 API 对象被提交给 APIServer 之后，总有一些“初始化”性质的工作需要在它们被 Kubernetes 项目正式处理之前进行。比如，自动为所有 Pod 加上某些标签（Labels）
 
-### 5.1 Dynamic Admission Control
+### 6.1 Dynamic Admission Control
 
 也叫作：Initializer
 
 Initializer，作为一个 Pod 部署在 Kubernetes, 是一个事先编写好的“自定义控制器”（Custom Controller）
 
 
-### 5.2 Istio Envoy 示例
+### 6.2 Istio Envoy 示例
 
 Istio中每个Pod里, 有一个以 sidecar 运行的Envoy容器, 实现方式:
 
@@ -394,9 +396,9 @@ K8s 编排对象可以分为两大类:
 1. 在线业务/Long Running Task: Deployment, StatefulSet, DaemonSet
 2. 离线业务/ Batch Job: Job
 
-## 6. 离线业务
+## 7. 离线业务
 
-### 6.1 Job
+### 7.1 Job
 
 Job Controller 控制的对象，直接就是 Pod, (spec.template)
 
@@ -429,7 +431,7 @@ Job 对Pod的调谐过程:
 * 需要创建的 Pod 数目 = 最终需要的 Pod 数目 - 实际在 Running 状态 Pod 数目 - 已经成功退出的 Pod 数目
 * 单时创建的 Pod 数目受到并行度(spec.parallelism)的限制
 
-#### 6.1.1 失败控制: restartPolicy
+#### 7.1.1 失败控制: restartPolicy
 
 在 Job 对象里只允许被设置为 Never 或者 OnFailure
 
@@ -439,11 +441,11 @@ Job 对Pod的调谐过程:
 
 * restartPolicy=OnFailure: Job 失败不会重新创建pod, 但会不断地尝试重启 Pod 里的容器
 
-#### 6.1.2 失败控制: spec.activeDeadlineSeconds
+#### 7.1.2 失败控制: spec.activeDeadlineSeconds
 
 设置最长运行时间, 超时后对应 Pod 都会被终止。并且可以在 Pod 的状态里看到终止的原因是 reason: DeadlineExceeded
 
-#### 6.1.3 并行控制
+#### 7.1.3 并行控制
 
 * spec.parallelism: 它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
 
@@ -460,7 +462,7 @@ pi        4         0            3s
 * DESIRED: 对应 spec.completions
 * SUCCESSFUL: 成功完成的pod数量
 
-### 6.2 CronJob
+### 7.2 CronJob
 
 CronJob 是一个 Job 对象的控制器（定义中的jobTemplate）
 
@@ -495,7 +497,7 @@ NAME      SCHEDULE      SUSPEND   ACTIVE    LAST-SCHEDULE
 hello     */1 * * * *   False     0         Thu, 6 Sep 2018 14:34:00 -070
 ```
 
-#### 6.2.1 并行控制:
+#### 7.2.1 并行控制:
 
 某个 Job 还没有执行完，按照调度新 Job 将被创建时, 是否允许并行由`concurrencyPolicy` 来控制:
 
@@ -503,7 +505,7 @@ hello     */1 * * * *   False     0         Thu, 6 Sep 2018 14:34:00 -070
 * concurrencyPolicy=Forbid，这意味着不会创建新的 Pod，该创建周期被跳过
 * concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没有执行完的 Job
 
-#### 6.2.2 失败控制
+#### 7.2.2 失败控制
 
 如果某一次 Job 创建失败，这次创建就会被标记为“miss”。当在指定的时间窗口内，miss 的数目达到失败上限100时，那么 CronJob 会停止再创建这个 Job
 
