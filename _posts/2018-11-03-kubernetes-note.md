@@ -513,7 +513,173 @@ hello     */1 * * * *   False     0         Thu, 6 Sep 2018 14:34:00 -070
 
 ---
 
-## Deployment
+## 8. Deployment
 
 TODO
+
+---
+
+## 9. Service
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: app1
+  name: app1
+  namespace: default
+spec:
+  type: ClusterIP/NodePort/LoadBalancer
+  clusterIP:            # 在type为ClusterIP时有效, 如果没有设置系统会自动提供一个
+  ports:
+  - name:               # 端口名称
+    port: 8080          # service暴露在cluster ip上的端口, <cluster ip>:port 是提供给集群内部客户访问service的入口
+    targetPort: 8080    # pod上的端口
+    nodePort: 30062     # 节点port, 提供给集群外部客户访问service的入口
+  selector:
+    name: app1
+```
+
+### 9.1 ServiceType
+
+* ClusterIP:
+
+  仅使用一个集群内部的IP地址 - 这是默认值
+
+  如果设置为`None`, 将创建一个Headless service
+
+* NodePort: 在集群内部IP的基础上，在集群的每一个节点的端口上开放这个服务。你可以在任意<NodeIP>:NodePort地址上访问到这个服务 
+
+  Kubernetes的master会从由启动参数配置的范围（默认是：30000-32767）中分配一个端口，然后每一个Node都会将这个端口（在每一个Node上相同的端口）代理到你的Service。这个端口会被写入你的Service的spec.ports[*].nodePort字段中
+
+  也可以自行设定 nodePort
+
+* LoadBalancer:
+
+  一种实现是: 增加EXTERNAL-IP, 是一个LB, 端口是服务的port, 转发到node的nodeport
+
+  ```
+  NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE       SELECTOR
+  node-koa-demo-service-2   LoadBalancer   172.16.255.211   119.28.109.191   4000:31750/TCP   87d       qcloud-app=node-koa-demo-service-2
+  ```
+
+  其中port 是 `服务内部port:主机nodeport`, 服务内部port同样用于EXTERNAL-IP
+
+### 9.2 Endpoints
+
+被 selector 选中的 Pod，就称为 Service 的 Endpoints，可以使用 `kubectl get ep` 查看
+
+只有处于 Running 状态，且 readinessProbe 检查通过的 Pod，才会出现在 Service 的 Endpoints 列表里。并且，当某一个 Pod 出现问题时，Kubernetes 会自动把它从 Service 里摘除掉
+
+### 9.3 Headless Service
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+
+```
+
+Headless Service 被创建后并不会被分配一个 VIP，而是会以 DNS 记录的方式暴露出它所代理的 Pod, 它所代理的所有 Pod 的 IP 地址，都会被绑定一个这样格式的 DNS 记录:
+
+```
+<pod-name>.<svc-name>.<namespace>.svc.cluster.local
+```
+
+### 9.5 Service 的 iptables 实现
+
+Service 是由 kube-proxy 组件，加上 iptables 来共同实现的
+
+1. `KUBE-SERVICES` 总链拦截service VIP 流量
+
+   kube-proxy 通过 Service 的 Informer 感知 Service 对象的添加, 然后在本机创建iptables规则:
+
+   在链`KUBE-SERVICES`新增接管该service VIP的流量
+
+   `-A KUBE-SERVICES -d 10.0.1.175/32 -p tcp -m comment --comment "default/hostnames: cluster IP" -m tcp --dport 80 -j KUBE-SVC-NWV5X2332I4OT4T3`
+
+   所有目的地址是 10.0.1.175:80 (VIP+service port)的 IP 包，都应该跳转到另外一条名叫 KUBE-SVC-NWV5X2332I4OT4T3
+
+2. Service 链均分流量到POD链
+
+   新建的 该Service对应的iptables 链:
+
+   ```
+   -A KUBE-SVC-NWV5X2332I4OT4T3 -m comment --comment "default/hostnames:" -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-WNBA2IHDGP2BOBGZ
+   -A KUBE-SVC-NWV5X2332I4OT4T3 -m comment --comment "default/hostnames:" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-X3P2623AGDH6CDF3
+   -A KUBE-SVC-NWV5X2332I4OT4T3 -m comment --comment "default/hostnames:" -j KUBE-SEP-57KPRZ3JQVENLNBR
+   ```
+
+   通过随机流量均分到3条新链, 每个链对应一个pod的链
+
+3. Pod链实现DNAT
+
+   ```
+   -A KUBE-SEP-57KPRZ3JQVENLNBR -s 10.244.3.6/32 -m comment --comment "default/hostnames:" -j MARK --set-xmark 0x00004000/0x00004000
+   -A KUBE-SEP-57KPRZ3JQVENLNBR -p tcp -m comment --comment "default/hostnames:" -m tcp -j DNAT --to-destination 10.244.3.6:9376
+
+   -A KUBE-SEP-WNBA2IHDGP2BOBGZ -s 10.244.1.7/32 -m comment --comment "default/hostnames:" -j MARK --set-xmark 0x00004000/0x00004000
+   -A KUBE-SEP-WNBA2IHDGP2BOBGZ -p tcp -m comment --comment "default/hostnames:" -m tcp -j DNAT --to-destination 10.244.1.7:9376
+
+   -A KUBE-SEP-X3P2623AGDH6CDF3 -s 10.244.2.3/32 -m comment --comment "default/hostnames:" -j MARK --set-xmark 0x00004000/0x00004000
+   -A KUBE-SEP-X3P2623AGDH6CDF3 -p tcp -m comment --comment "default/hostnames:" -m tcp -j DNAT --to-destination 10.244.2.3:9376
+   ```
+
+   做了2件事:
+
+   * `--set-xmark`
+   * IP 包进行了DNAT, 目的地址改为该pod的的ip和端口
+
+### 9.6 Service 的 IPVS 实现
+
+TODO
+
+### 9.7 Service 与 DNS
+
+Service 有2中访问方式:
+
+1. VIP
+2. DNS: Service 对应的域名
+
+#### DNS A 记录:
+
+* Normal Service: 服务A 记录: `<service-name>.<namespace>.svc.cluster.local -> my-svc的VIP`
+* Pod: `<pod-ip-address>.<namespace>.pod.cluster.local`, 如: `1-2-3-4.default.pod.cluster.local`
+* Headless Service: 服务A 记录: `<service-name>.<namespace>.svc.cluster.local -> my-svc所有pod ip集合`
+* Headless Service pod 新增 A 记录: `<pod-hostname>.my-svc.my-namespace.svc.cluster.local -> 该pod ip`
+
+#### DNS SRV 记录:
+
+> DNS SRV是DNS记录中一种，用来指定服务地址。与常见的A记录、cname不同的是，SRV中除了记录服务器的地址，还记录了服务的端口，并且可以设置每个服务地址的优先级和权重。访问服务的时候，本地的DNS resolver从DNS服务器查询到一个地址列表，根据优先级和权重，从中选取一个地址作为本次请求的目标地址
+
+Service 命名端口: `<port-name>.<protocol>.<service-name>.<namespace>.svc.cluster.localhost`
+
+* Normal Service: 解析出service 对应的A记录和该端口号
+* Headless Service: 返回多个值(所有pod A记录)已经端口号
+
+---
+
+### 10. Statefulset
+
+
+
+---
+
+本地代理service: TODO
+
+`kubectl proxy`
+
+`http://localhost:8001/api/v1/namespaces/default/services/foxdemo-develop:80/proxy/`
+
 
