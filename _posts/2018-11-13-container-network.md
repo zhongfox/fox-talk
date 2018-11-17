@@ -160,7 +160,7 @@ Address                  HWtype  HWaddress           Flags Mask            Iface
 
 1. 启动容器, 网络选择none
 
-  `docker run -itd --name test1 --net=none ubuntu bash`
+   `docker run -itd --name test1 --net=none ubuntu bash`
 
 2. 手动创建网桥, 并启动
 
