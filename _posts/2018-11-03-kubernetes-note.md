@@ -652,21 +652,21 @@ Service 有2中访问方式:
 1. VIP
 2. DNS: Service 对应的域名
 
-#### DNS A 记录:
+#### 9.7.1 DNS A 记录:
 
 * Normal Service: 服务A 记录: `<service-name>.<namespace>.svc.cluster.local -> my-svc的VIP`
 * Pod: `<pod-ip-address>.<namespace>.pod.cluster.local`, 如: `1-2-3-4.default.pod.cluster.local`
 * Headless Service: 服务A 记录: `<service-name>.<namespace>.svc.cluster.local -> my-svc所有pod ip集合`
 * Headless Service pod 新增 A 记录: `<pod-hostname>.my-svc.my-namespace.svc.cluster.local -> 该pod ip`
 
-#### DNS SRV 记录:
+#### 9.7.2 DNS SRV 记录:
 
 > DNS SRV是DNS记录中一种，用来指定服务地址。与常见的A记录、cname不同的是，SRV中除了记录服务器的地址，还记录了服务的端口，并且可以设置每个服务地址的优先级和权重。访问服务的时候，本地的DNS resolver从DNS服务器查询到一个地址列表，根据优先级和权重，从中选取一个地址作为本次请求的目标地址
 
 Service 命名端口: `<port-name>.<protocol>.<service-name>.<namespace>.svc.cluster.localhost`
 
 * Normal Service: 解析出service 对应的A记录和该端口号
-* Headless Service: 返回多个值(所有pod A记录)已经端口号
+* Headless Service: 返回多个值(所有pod A记录)和该端口号
 
 ---
 
