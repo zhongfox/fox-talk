@@ -557,7 +557,9 @@ spec:
 
 * LoadBalancer:
 
-  一种实现是: 增加EXTERNAL-IP, 是一个LB, 端口是服务的port, 转发到node的nodeport
+  在公有云提供的 Kubernetes 服务里，都使用了一个叫作 CloudProvider 的转接层，来跟公有云本身的 API 进行对接。所以，在 LoadBalancer 类型的 Service 被提交后，Kubernetes 就会调用 CloudProvider 在公有云上创建一个负载均衡服务，并且把被代理的 Pod 的 IP 地址配置给负载均衡服务做后端. (然后将LB ip 配置到EXTERNAL-IP ?) 
+
+  EXTERNAL-IP 是一个LB, 端口是服务的port, 转发到node的nodeport
 
   ```
   NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE       SELECTOR
@@ -565,6 +567,22 @@ spec:
   ```
 
   其中port 是 `服务内部port:主机nodeport`, 服务内部port同样用于EXTERNAL-IP
+
+  另外`Service.externalIPs` 可以直接设置, Kubernetes 要求 externalIPs 必须是至少能够路由到一个 Kubernetes 的节点.
+
+* ExternalName:
+
+  ```
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: my-service
+  spec:
+    type: ExternalName
+    externalName: my.database.example.com
+  ```
+
+  在`kube-dns` 里添加了一条 CNAME 记录: `Service的DNS域名 -> my.database.example.com`
 
 ### 9.2 Endpoints
 
@@ -601,7 +619,7 @@ Headless Service 被创建后并不会被分配一个 VIP，而是会以 DNS 记
 
 Service 是由 kube-proxy 组件，加上 iptables 来共同实现的
 
-1. `KUBE-SERVICES` 总链拦截service VIP 流量
+1. `KUBE-SERVICES` Service 的入口链: 拦截service VIP 流量
 
    kube-proxy 通过 Service 的 Informer 感知 Service 对象的添加, 然后在本机创建iptables规则:
 
@@ -611,9 +629,9 @@ Service 是由 kube-proxy 组件，加上 iptables 来共同实现的
 
    所有目的地址是 10.0.1.175:80 (VIP+service port)的 IP 包，都应该跳转到另外一条名叫 KUBE-SVC-NWV5X2332I4OT4T3
 
-2. Service 链均分流量到POD链
+2. `KUBE-SVC-(hash)` 负载均衡链: 均分流量到POD链
 
-   新建的 该Service对应的iptables 链:
+   新建的 该Service对应的iptables 链, 这些规则的数目应该与 Endpoints 数目一致:
 
    ```
    -A KUBE-SVC-NWV5X2332I4OT4T3 -m comment --comment "default/hostnames:" -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-WNBA2IHDGP2BOBGZ
@@ -623,7 +641,7 @@ Service 是由 kube-proxy 组件，加上 iptables 来共同实现的
 
    通过随机流量均分到3条新链, 每个链对应一个pod的链
 
-3. Pod链实现DNAT
+3. `KUBE-SEP-(hash)` Pod DNAT链: 这些规则应该与 Endpoints 一一对应
 
    ```
    -A KUBE-SEP-57KPRZ3JQVENLNBR -s 10.244.3.6/32 -m comment --comment "default/hostnames:" -j MARK --set-xmark 0x00004000/0x00004000
@@ -638,8 +656,33 @@ Service 是由 kube-proxy 组件，加上 iptables 来共同实现的
 
    做了2件事:
 
-   * `--set-xmark`
    * IP 包进行了DNAT, 目的地址改为该pod的的ip和端口
+   * `--set-xmark` 打上标记`0x00004000`
+
+NodePort 的 Service 实现:
+
+1. NodePort `KUBE-NODEPORTS` Service 的入口链
+
+   ```
+   -A KUBE-NODEPORTS -p tcp -m comment --comment "default/my-nginx: nodePort" -m tcp --dport 8080 -j KUBE-SVC-67RL4FN6JRUPOJYM
+   ```
+
+2. `KUBE-SVC-(hash)` 负载均衡链: 同上
+
+3. `KUBE-SEP-(hash)` Pod DNAT链: 同上
+
+4. `KUBE-POSTROUTING` 对离开本主机去其他node的, 由Service 转发出来的 IP 包进行SNAT
+
+   ```
+   -A KUBE-POSTROUTING -m comment --comment "kubernetes service traffic requiring SNAT" -m mark --mark 0x4000/0x4000 -j MASQUERADE
+   ```
+
+   根据`mark==0x4000` 进行匹配需要处理的包, 该标记是第三步打上的
+
+   SNAT的目的是让具体pod的返包原路返回, 而不是由pod直接返回给node, 不过这样pod 是不知道真实的clint ip.
+
+   如果pod 需要知道client 真实的ip, 可以设置Service `externalTrafficPolicy: local`: 这时候，一台宿主机上的 iptables 规则，会设置为只将 IP 包转发给运行在这台宿主机上的 Pod, 这也就意味着如果在一台宿主机上，没有任何一个被代理的 Pod 存在，请求会直接被 DROP 掉
+
 
 ### 9.6 Service 的 IPVS 实现
 
