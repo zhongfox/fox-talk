@@ -713,7 +713,88 @@ Service 命名端口: `<port-name>.<protocol>.<service-name>.<namespace>.svc.clu
 
 ---
 
-### 10. Statefulset
+## 10. Ingress
+
+Ingress 对象，其实就是 Kubernetes 项目对“反向代理”的一种抽象, 是全局的、为了代理不同后端 Service 而设置的负载均衡服务
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cafe-ingress
+spec:
+  tls:
+  - hosts:
+    - cafe.example.com
+    secretName: cafe-secret
+  rules:
+  - host: cafe.example.com # 必须是域名不能是IP
+    http:
+      paths:
+      - path: /tea
+        backend:
+          serviceName: tea-svc
+          servicePort: 80
+      - path: /coffee
+        backend:
+          serviceName: coffee-svc
+          servicePort: 80
+
+```
+
+Ingress Controller:  Ingress 只是一个统一的抽象, 具体实现需要从社区选用 Ingress Controller, 目前包括:  Nginx、HAProxy、Envoy、Traefik 等
+
+Nginx Ingress Controller 示例:
+
+
+* 名为nginx-configuration 的 ConfigMap:
+
+  允许通过 Kubernetes 的 ConfigMap 对象来对上述 Nginx 配置文件进行定制
+
+* 名为nginx-ingress-controller的 Deployment:
+
+  启动POD: 是一个监听 Ingress 对象以及它所代理的后端 Service 变化的控制器
+
+  1. 当新的 Ingress 对象由用户创建后
+  2. nginx-ingress-controller 根据 Ingress 对象里定义的内容，生成一份对应的 Nginx 配置文件（/etc/nginx/nginx.conf），并使用这个配置文件启动一个 Nginx 服务
+  3. 当Ingress 对象被更新，nginx-ingress-controller 就会更新这个配置文件
+
+一个 Nginx Ingress Controller 为你提供的服务，其实是一个可以根据 Ingress 对象和被代理后端 Service 的变化，来自动进行更新的 Nginx 负载均衡器
+
+---
+
+## 资源模型
+
+资源分类:
+
+* 可压缩资源（compressible resources）: 当可压缩资源不足时，Pod 只会“饥饿”，但不会退出, 如 CPU
+* 不可压缩资源（compressible resources）。当不可压缩资源不足时，Pod 就会因为 OOM（Out-Of-Memory）被内核杀掉
+
+内存和CPU限制:
+
+* 指定 Container’s request, 没有指定Container’s limit: limit 使用 default memory limit for the namespace
+* 指定 Container’s limit, 没指定Container’s request: request 和 limit 相同
+
+设置单位:
+
+* CPU:
+  * 个数设置:  cpu=1 指的就是，这个 Pod 的 CPU 限额是 1 个 CPU
+  * 分数设置:  cpu=500m, 就是 500 millicpu，也就是 0.5 个 CPU
+* Memory: 支持单位:
+  * Ei、Pi、Ti、Gi、Mi、Ki
+  * E、P、T、G、M、K
+
+资源评级QOS:
+
+QoS 划分的主要应用场景，是当宿主机资源紧张的时候，kubelet 对 Pod 进行 Eviction（即资源回收）时需要用到的
+
+* Guaranteed
+* Burstable
+* BestEffort
+
+---
+
+## 10. Statefulset
 
 
 
