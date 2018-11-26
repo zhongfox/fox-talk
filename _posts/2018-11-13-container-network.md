@@ -207,16 +207,20 @@ Address                  HWtype  HWaddress           Flags Mask            Iface
 
 ## 2. 容器跨主通信
 
+技术方案: Overlay Network（覆盖网络）, 在已有的宿主机网络上，通过软件构建一个覆盖在已有宿主机网络之上的、可以把所有容器连通在一起的虚拟网络
 
-Overlay Network（覆盖网络）: 在已有的宿主机网络上，通过软件构建一个覆盖在已有宿主机网络之上的、可以把所有容器连通在一起的虚拟网络
+实现方案:
+
+* Flannel
+* Calico
 
 ---
 
 ## 3. Flannel
 
+* UDP
 * VXLAN
 * host-gw
-* UDP
 
 ### 3.1 UDP
 
@@ -273,6 +277,7 @@ VXLAN: 即 Virtual Extensible LAN（虚拟可扩展局域网）
 * VTEP(VXLAN Tunnel End Point): 虚拟隧道端点, VXLAN 会在宿主机上设置一个特殊的网络设备作为“隧道”的两端, 它既有 IP 地址，也有MAC 地址
 * VXLAN Header VNI: VTEP 设备识别某个数据帧是不是应该归自己处理的重要标识。而在 Flannel 中，VNI 的默认值是 1，这也是为何，宿主机上的 VTEP 设备都叫作 flannel.1 的原因，这里的“1”，其实就是 VNI 的值
 * FDB (Forwarding Database):
+* 性能损失在 20%~30% 左右
 
 
 通信过程解析:
@@ -313,7 +318,7 @@ VXLAN: 即 Virtual Extensible LAN（虚拟可扩展局域网）
 
    生成内部数据帧: `[目的MAC:node2.flannel.1.MAC, 目的IP:container2.IP, ...]`
 
-5. node1.flannel.2 尝试将原始IP包发往node2.flannel.1: 实现是将不同宿主机的flannel.1组成一个二层网络
+5. node1.flannel.1 尝试将原始IP包发往node2.flannel.1: 实现是将不同宿主机的flannel.1组成一个二层网络
 
    生成VXLAN数据: 增加VXLAN Header:  `[VxlanHeader:VNI:1 [目的MAC:node2.flannel.1.MAC, 目的IP:container2.IP, ...]]`
 
@@ -330,5 +335,46 @@ VXLAN: 即 Virtual Extensible LAN（虚拟可扩展局域网）
 8. node.2.flannel.1 设备则会进一步拆包，取出“原始 IP 包”
 
 ### 3.3 host-gw
+
+* 必须要求集群宿主机之间是二层连通的
+* host-gw 其实就是将每个 Flannel 子网（Flannel Subnet，比如：10.244.1.0/24）的“下一跳”，设置成了该子网对应的宿主机的 IP 地址
+* Flannel 子网和主机的信息，都是保存在 Etcd 当中的。flanneld 只需要 WACTH 这些数据的变化，然后实时更新路由表即可
+* 性能损失大约在 10% 左右
+
+
+通信过程解析:
+
+* node1-container1(container:A.B.1.2/24, cni0:A.B.1.1/24, node.eth0:X.Y.Z.1/24)
+* node2-container2(container:A.B.2.2/24, cni0:A.B.2.1/24, node.eth0:X.Y.Z.2/24)
+* node 默认网关: X.Y.Z.0
+
+1. 路由配置
+
+   node1.flanneld 自动配置路由:
+
+   ```
+   default via X.Y.Z.0 dev eth0                            # 主机默认网关
+   A.B.1.0/24 dev cni0 proto Kernel scope link src A.B.1.1 # 发给本机的容器网段IP包, 交给cni0
+   A.B.2.0/24 via X.Y.Z.2 dev eth0                         # 发给其他主机的容器网段IP包, 交给对应主机的eth0网卡
+   ```
+
+   node2.flanneld 自动配置路由:
+
+   ```
+   default via X.Y.Z.0 dev eth0                            # 主机默认网关
+   A.B.2.0/24 dev cni0 proto Kernel scope link src A.B.2.1 # 发给本机的容器网段IP包, 交给cni0
+   A.B.1.0/24 via X.Y.Z.1 dev eth0                         # 发给其他主机的容器网段IP包, 交给对应主机的eth0网卡
+   ```
+
+2. node1-container1 发往 node2-container2
+
+   1) node1-container1发送:  匹配node1 规则3, 数据从eth0, 发往node2.eth0
+
+   2) node2 接受: 匹配node2 规则2, 数据包交给 cni0, 后续会进入container2
+
+
+---
+
+## Calico
 
 TODO
