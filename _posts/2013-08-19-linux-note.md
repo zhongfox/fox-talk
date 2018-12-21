@@ -369,7 +369,6 @@ title: Linux 笔记
 
   * SHR：shared memory 共享内存
 
-* pstree -u 同时列出进程所属账号 -p 同时列出pid
 
 * daemon/service
 
@@ -489,4 +488,28 @@ bash 中 `set -ex`:
 * e:  it exits as soon as any line in the bash script fails, 也就可以省略连接script的&&
 * x:  it prints each command that is going to be executed with a little plus
 
+---
 
+进程组:
+
+* 每个进程都属于一个进程组，进程组包含多个进程
+* 每个进程组有一个唯一的进程组id, 函数getpgrp返回当前调用进程的进程组ID
+* 可以接受同一终端的各种信号，同一信号发送进程组就等于发送给组中的所有进程
+
+生命周期:
+
+* 从进程组创建开始到其中最后一个进程离开为止的时间区间称为进程组的生存期
+* 只要在某个进程组中有一个进程存在，则该进程组就存在，这与其组长是否终止无关
+
+组长进程:
+
+* 每个进程组都可以有一个组长进程。组长进程的标识是，其进程组ID等于其进程ID
+* 组长进程可以创建进程组以及该组中的进程
+* 进程组中的最后一个进程可以终止，或者转移到另一个进程组
+* 进程可以通过调用setpgid来加入一个现有的组或者创建一个新进程组
+
+pstree:
+
+* -u 同时列出进程所属账号 -p 同时列出pid
+* -g, --show-pgids    show process group ids; implies -c
+* -p, --show-pids     show PIDs; implies -c
