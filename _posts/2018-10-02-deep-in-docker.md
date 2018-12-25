@@ -159,6 +159,30 @@ TODO
 
 ## 3. Docker 架构
 
+组件构成:
+
+```
+docker*
+dockerd*
+docker-containerd*
+docker-containerd-ctr*
+docker-containerd-shim*
+docker-init*
+docker-proxy*
+docker-runc*
+```
+
+组件关系:
+
+docker-cli -> dockerd(守护进程) --grpc--> containerd --(exec)--> shim --(exec)--> runc
+
+```
+/usr/bin/dockerd --bip=169.254.32.1/28 --ip-masq=false --iptables=false --log-level=warn --storage-driver=aufs --graph=/var/lib/docker --registry-mirror=https://mirror.ccs.xxx.com --log-driver=json-file --log-opt=max-file=10 --log-opt=max-size=100m --live-restore=true
+  \_ docker-containerd --config /var/run/docker/containerd/containerd.toml
+    \_ docker-containerd-shim -namespace moby -workdir /var/lib/docker/containerd/daemon/io.containerd.runtime.v1.linux/moby/735bc014dbdba57f26d595770a8aa8764430bafbb1ede6f47c0f0c5881db9f2b -address /var/run/docker/containerd/docker-containerd.sock -containerd-binary /usr/bin/docker-containerd -runtime-root /var/run/docker/runtime-runc
+       \_ sh sleep XXX
+```
+
 ### Docker daemon
 
 后台启动一个API Server, 负责响应来自Docker Client的请求, 根据不同的请求分发到不同的模块, 翻译成系统调用完成容器管理操作
@@ -184,6 +208,36 @@ daemon 模块:
 
 * libcontainer
 * libnetwork: 抽象出一个容器网络模型(CNM), 给调用者提供一个统一抽象接口
+
+### containerd
+
+* 是dockerd的子进程
+* containerd是容器技术标准化之后的产物，为了能够兼容OCI标准，将容器运行时及其管理功能从Docker Daemon剥离
+* containerd本身也只是一个守护进程
+* containerd主要职责是镜像管理（镜像、元信息等）、容器执行（调用最终运行时组件执行）
+* containerd向上为Docker Daemon提供了gRPC接口，使得Docker Daemon屏蔽下面的结构变化，确保原有接口向下兼容。向下通过containerd-shim结合runC，使得引擎可以独立升级
+
+### docker-containerd-shim
+
+* 是containerd的子进程, 每个容器一个
+* 允许runc在创建, 运行容器之后, runc退出
+* 用shim作为容器的父进程，而不是直接用containerd作为容器的父进程，是为了防止这种情况：当containerd挂掉的时候，shim还在，因此可以保证容器打开的文件描述符不会被关掉
+* 依靠shim来收集&报告容器的退出状态，这样就不需要containerd来wait子进程
+
+使用shim的主要作用，就是将containerd和真实的容器（里的进程）解耦
+
+传入的启动参数:
+
+* 容器id
+* 容器相关的目录
+
+### RunC
+
+* OCI定义了容器运行时标准，runC是Docker按照开放容器格式标准（OCF, Open Container Format）制定的一种具体实现
+
+### docker-init
+
+UNIX系统中，1号进程是init进程，也是所有孤儿进程的父进程。而使用docker时，如果不加 --init 参数，容器中的1号进程 就是所给的ENTRYPOINT，而加上 --init 之后，1号进程就会是 tini
 
 ---
 
