@@ -23,6 +23,8 @@ TCP Keepalive/HTTP长连接/短连接/并行连接/HTTP keep-alive/pipeline, 这
 
 * 规范建议keepalive保活包不应该包含数据，但也可以包含1个无意义的字节，比如0x0
 
+补充: [聊聊 TCP 长连接和心跳那些事](https://www.cnkirito.moe/tcp-talk/)
+
 ---
 
 ## HTTP

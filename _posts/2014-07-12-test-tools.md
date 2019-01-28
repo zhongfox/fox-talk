@@ -136,7 +136,7 @@ NetCat，在网络工具中有“瑞士军刀”美誉
 
 ### 参数
 
-* -a (all) 显示所有状态，包括LISTEN(默认不显示LISTEN)
+* -a (all) 显示所有状态，(如果不加a的话 normally sockets used by server processes are not shown)
 * -t (tcp)仅显示tcp相关选项
 * -u (udp)仅显示udp相关选项
 * -x socket

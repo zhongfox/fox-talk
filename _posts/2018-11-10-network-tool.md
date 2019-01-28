@@ -138,7 +138,14 @@ ARP或者NDISC缓冲区条目
 
 * ip route list 显示核心路由表
 
-路由表和设备无关?
+```
+ip route add 10.176.48.0/20 via 10.173.32.1 dev eth0
+
+ip rule add from 192.168.1.0/24 table 10 # 此网段使用10号路由表
+
+# 在一条路由规则中，也可以走多条路径, 可以配置权重
+ip route add default scope global nexthop via 100.100.100.1 weight 1 nexthop via 200.200.200.1 weight 2
+```
 
 ### 1.6 rule
 

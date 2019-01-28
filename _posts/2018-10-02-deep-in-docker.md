@@ -253,7 +253,6 @@ docker 镜像的特点:
 * 内容寻址: 镜像层通过内容计算hash值
 * 联合挂载: 实现分层合并
 
-
 本地标识:
 
 * layer.DiffID: DiffID = SHA256hex(uncompressed layer data)
