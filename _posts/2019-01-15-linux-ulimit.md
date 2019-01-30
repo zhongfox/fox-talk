@@ -1,7 +1,7 @@
 ---
 layout: post
 tags : [linux]
-title: Linux Ulimit
+title: Linux Ulimit 小记
 
 ---
 
