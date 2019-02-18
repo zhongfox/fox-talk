@@ -1,0 +1,420 @@
+<!--
+    Powered By nodeppt - This is probably the best web presentation tool so far!
+    version: 1.4.5
+    site: https://github.com/ksky521/nodeppt
+    date: 
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spinnaker 分享 - By foxzhong</title>
+    <link rel="stylesheet" media="all" href="./css/nodeppt.css">
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="./css/phone.css">
+    
+    <link rel="stylesheet" href="./js/highlight/styles/monokai_sublime.css">
+    <link rel="stylesheet" href="./css/font-awesome.css">
+    
+<link rel="stylesheet" href="./css/theme.moon.css">
+</head>
+<body>
+<div class="slides">
+    <slides id="container">
+        <slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>持续部署工具Spinnaker分享</h1>
+<h2><img itemprop="image" class="TableObject-item avatar" src="https://avatars0.githubusercontent.com/u/7634182?s=200&amp;v=4" width="100" height="100" alt="@spinnaker"></h2>
+<blockquote>
+<p>open-source, multi-cloud continuous delivery platform</p>
+</blockquote>
+<p><a href="https://github.com/spinnaker" target="_blank">https://github.com/spinnaker</a></p>
+<p><br> <br></p>
+<p>by foxzhong</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Multiple Cloud</h2>
+
+</hgroup><article>
+
+<ul>
+<li>App Engine</li>
+<li>Amazon Web Services</li>
+<li>Azure</li>
+<li>DC/OS</li>
+<li>Google Compute Engine</li>
+<li><strong>Kubernetes</strong></li>
+<li>Openstack</li>
+<li>Oracle</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h1>Concepts Map to Kubernetes</h1>
+
+</hgroup><article>
+
+<table>
+<thead>
+<tr>
+<th><strong>Spinnaker</strong></th>
+<th><strong>Kubernetes</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Account</td>
+<td>≈Cluster</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>资源集合 Cluster/SG/LB/Firewall</td>
+</tr>
+<tr>
+<td>Cluster</td>
+<td>≈Deployment</td>
+</tr>
+<tr>
+<td>Server Group</td>
+<td>Replica Set</td>
+</tr>
+<tr>
+<td>Instance</td>
+<td>Pod</td>
+</tr>
+<tr>
+<td>Load Balancer</td>
+<td>≈Services,Ingresses</td>
+</tr>
+<tr>
+<td>Firewall</td>
+<td>≈NetworkPolicies</td>
+</tr>
+<tr>
+<td>Pipeline/Task</td>
+<td></td>
+</tr>
+<tr>
+<td>Trigger</td>
+<td></td>
+</tr>
+<tr>
+<td>Artifact</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h1>Continuous Integration Principles</h1>
+
+</hgroup><article>
+
+<ul>
+<li>Immutable Infrastructure</li>
+<li>Deployment Strategy</li>
+<li>Automation</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Deployment Strategy</h2>
+
+</hgroup><article>
+
+<img src="https://www.spinnaker.io/concepts/deployment-strategies.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>How to Deploy</h2>
+
+</hgroup><article>
+
+<ol>
+<li><p>新版本部署目标资源:</p>
+<ul>
+<li>新实例(旧实例保留)</li>
+<li>旧版本实例(先去除流量)</li>
+</ul>
+</li>
+<li><p>新版本部署实例step:</p>
+<p>1 ~ n% ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例无流量验证:</p>
+<p>(可选人工介入: QA测试/上线审批...)</p>
+<ul>
+<li>无</li>
+<li>健康检查/冒烟测试/功能测试</li>
+</ul>
+</li>
+<li><p>新版本流量增加(伴随老版本流量减少):</p>
+<p>(可选人工介入: QA测试/上线审批...)</p>
+<p>1 ~ n% ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例流量验证:</p>
+<ul>
+<li>无</li>
+<li>健康检查/冒烟测试/功能测试</li>
+<li>金丝雀分析</li>
+</ul>
+<p>(验证失败回滚: 删除新实例, 流量100%切回旧实例)</p>
+</li>
+<li><p>旧版本实例保留时间:</p>
+<ul>
+<li>不保留</li>
+<li>保留N小时以便回滚之需</li>
+</ul>
+</li>
+</ol>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Blue/Green</h2>
+
+</hgroup><article>
+
+<ol>
+<li><p>新版本部署目标资源:</p>
+<ul>
+<li><strong>新实例</strong></li>
+<li>旧版本实例</li>
+</ul>
+</li>
+<li><p>新版本部署实例step:</p>
+<p>1 ~ n% ~ 50% ~ <strong>100%</strong></p>
+</li>
+<li><p>新版本实例无流量验证:</p>
+<ul>
+<li>无</li>
+<li><strong>健康检查/冒烟测试/功能测试</strong></li>
+</ul>
+</li>
+<li><p>新版本流量增加:</p>
+<p>1 ~ n% ~ 50% ~ <strong>100%</strong></p>
+</li>
+<li><p>新版本实例流量验证:</p>
+<ul>
+<li>无</li>
+<li>健康检查/冒烟测试/功能测试</li>
+<li>金丝雀分析</li>
+</ul>
+</li>
+<li><p>旧版本实例保留时间:</p>
+<ul>
+<li>不保留</li>
+<li><strong>保留N小时以便回滚之需</strong></li>
+</ul>
+</li>
+</ol>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Rolling Blue/Green</h2>
+
+</hgroup><article>
+
+<ol>
+<li><p>新版本部署目标资源:</p>
+<ul>
+<li><strong>新实例</strong></li>
+<li>旧版本实例</li>
+</ul>
+</li>
+<li><p>新版本部署实例step:</p>
+<p>1 ~ <strong>n%</strong> ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例无流量验证:</p>
+<ul>
+<li>无</li>
+<li><strong>健康检查/冒烟测试/功能测试</strong></li>
+</ul>
+</li>
+<li><p>新版本流量增加:</p>
+<p>1 ~ <strong>n%</strong> ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例流量验证:</p>
+<ul>
+<li>无</li>
+<li><strong>健康检查/冒烟测试/功能测试</strong></li>
+<li>金丝雀分析</li>
+</ul>
+</li>
+<li><p>旧版本实例保留时间:</p>
+<ul>
+<li>不保留</li>
+<li><strong>保留N小时以便回滚之需</strong></li>
+</ul>
+</li>
+</ol>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Canary</h2>
+
+</hgroup><article>
+
+<ol>
+<li><p>新版本部署目标资源:</p>
+<ul>
+<li>新实例</li>
+<li>旧版本实例</li>
+</ul>
+</li>
+<li><p>新版本部署实例step:</p>
+<p><strong>1</strong> ~ n% ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例无流量验证:</p>
+<ul>
+<li>无</li>
+<li><strong>健康检查/冒烟测试/功能测试</strong></li>
+</ul>
+</li>
+<li><p>新版本流量增加:</p>
+<p><strong>1</strong> ~ n% ~ 50% ~ 100%</p>
+</li>
+<li><p>新版本实例流量验证:</p>
+<ul>
+<li>无</li>
+<li>健康检查/冒烟测试/功能测试</li>
+<li><strong>金丝雀分析</strong></li>
+</ul>
+</li>
+<li><p>旧版本实例保留时间:</p>
+<ul>
+<li>不保留</li>
+<li><strong>保留N小时以便回滚之需</strong></li>
+</ul>
+</li>
+</ol>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Highlander</h2>
+
+</hgroup><article>
+
+<p>......</p>
+<p>6 . 旧版本实例保留时间:</p>
+<ul>
+<li><strong>不保留</strong></li>
+<li>保留N小时以便回滚之需</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Spinnaker Pipeline Stages</h2>
+
+</hgroup><article>
+
+<img src="https://www.spinnaker.io/concepts/pipelines.png">
+<p><a href="https://www.spinnaker.io/reference/pipeline/stages/" target="_blank">https://www.spinnaker.io/reference/pipeline/stages/</a></p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><hgroup>
+<h2>Tencenthub Workflow CD plan</h2>
+
+</hgroup><article>
+
+<ul>
+<li>通知功能: 企业微信/邮件/钉钉/自定义组件</li>
+<li>暂停/人工干预</li>
+<li>蓝绿发布</li>
+<li>灰度发布</li>
+<li>版本回滚</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide fill" style="background-image:url('https://www.spinnaker.io/assets/images/top-right-swoosh.svg')"><section class="slide-wrapper"><hgroup>
+<h2>The end</h2>
+
+</hgroup><article>
+
+<p>Q&amp;A</p>
+
+</article></section></slide>
+        
+
+        <!-- <slide class="slide logoslide dark nobackground">
+            <article class="flexbox vcenter">
+                <h2 style="color: white;">Powered By nodeppt v1.4.5</h2>
+            </article>
+        </slide> -->
+        <div class="slideTip" id="tip"></div>
+    </slides>
+</div>
+<canvas id="drawBoard" class="draw-board" width="900" height="700"></canvas>
+<div class="progress"><span id="progress"></span></div>
+<div id="_buttons">
+    <div class="_btn-box" id="_btn-box" style="display:none;">
+        <button class="fa fa-arrow-circle-left" id="_btn-prev"></button>
+        <button class="fa fa-arrow-circle-right" id="_btn-next"></button>
+        <button class="fa fa-paint-brush" id="_btn-brush"></button>
+        <button class="fa fa-compress" id="_btn-overview" data-toggle="fa fa-expand"></button>
+    </div>
+    <button class="fa fa-bars" id="_btn-bar"  data-toggle="fa fa-close"></button>
+</div>
+<script src="./js/mixjs/lib/mix.0.3.0.min.js"></script>
+<script>
+    var ASSET_RELATIVE_DIR = ".";
+</script>
+<script>
+var base = location.protocol + '//' + location.host;
+
+var path = (location.pathname + '#').split('/').filter(function(v){
+    return !!v;
+});
+path.pop();
+path = path.join('/');
+if (typeof ASSET_RELATIVE_DIR === 'string') {
+    path = path + '/' + ASSET_RELATIVE_DIR;
+}
+MixJS.config({
+    baseURL: [ base, path, 'js'].join('/')+'/'
+});
+
+</script>
+<script src="./js/mixjs/lib/event/broadcast.js"></script>
+<script src="./js/nodeppt.js"></script>
+<script>
+Slide.init({
+    containerID: 'container',
+    drawBoardID: 'drawBoard',
+    slideClass: '.slide',
+    buildClass: '.build',
+    progressID: 'progress',
+    transition: 'slide3',
+    width: 1100,
+    dir: './',
+    
+    //打开下面的注释就开启postMessage方式
+    //访问网址127.0.0.1:8080/ppt/demo#client
+    control:{
+        type: 'postMessage',
+        args:{
+            isControl:  false
+        }
+    },
+    
+    tipID: 'tip'
+});
+MixJS.loadJS('highlight/highlight.pack.js',function(){
+    hljs.tabReplace = '  ';
+    hljs.initHighlightingOnLoad();
+});
+</script>
+<script src="./js/demo.js"></script>
+<link rel="stylesheet" href="./css/demo.css">
+<script src="./js/zoom.js"></script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  config: ["TeX-AMS-MML_HTMLorMML.js"],
+  tex2jax: {inlineMath: [['\\(','\\)']]}});
+  //['$','$'], 避免货币价格冲突
+</script>
+<script type="text/javascript" src="./js/mathjax/MathJax.js"></script>
+
+<!--placeholder-->
+</body>
+</html>
