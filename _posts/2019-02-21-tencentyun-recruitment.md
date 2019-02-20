@@ -9,7 +9,7 @@ Kubernetes Istio 方向, 大平台, 前沿技术, 成都深圳
 
 简历: zhongfox@gmail.com
 
-微信: zhongfox
+微信: zhongfox 请备注 应聘
 
 ### 腾讯云容器后台高级工程师
 
