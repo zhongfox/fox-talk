@@ -2,6 +2,7 @@
 layout: post
 title: 关于负载均衡
 tags: [loadbalancer, network]
+header-img: img/pic/2015/10/kanasiquanjing.jpg
 
 ---
 
