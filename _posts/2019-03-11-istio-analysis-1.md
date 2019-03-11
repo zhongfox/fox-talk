@@ -190,4 +190,6 @@ mixer 组件包含2个pod, istio-telemetry 和 istio-policy, istio-telemetry负�
 
 ---
 
+后续将对各组件逐一进行分析.
+
 > 版权归作者所有, 欢迎转载, 转载请注明出处
