@@ -486,7 +486,7 @@ func (con *connection) queueResponse(resp *WatchResponse) {
 
 <a href="https://imfox.io/assets/images/istio-a/galley_uml.png" target="_blank">查看高清原图</a>
 
-Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对「配置」数据源的抽象, Distributor 是「配置」快照存储的抽象, Watcher 是对「配置」订阅端的抽象. 抽象的具体实现可以组合起来使用. 另外Galley组件之间也充分解耦, 组件之间的数据源通过chan/watcher等流转.
+Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对「配置」数据源的抽象, Distributor 是「配置」快照存储的抽象, Watcher 是对「配置」订阅端的抽象. 抽象的具体实现可以组合起来使用. 另外Galley组件之间也充分解耦, 组件之间的数据通过chan/watcher等流转.
 
 关于早期 istio 配置管理的演进计划, 可以参考2018年5月 CNCF KubeCon talk [Introduction to Istio Configuration - Joy Zhang](<https://www.youtube.com/watch?v=x1Tyw8dFKjI&index=2&t=0s&list=LLQ2StCCdx81xHxHxBO0foGA>) (需.翻.墙),  1.1 版本中Galley 也还未完全实现该文中的roadmap, 如 configuration pipeline 等. 未来Galley 还会继续演进.
 
