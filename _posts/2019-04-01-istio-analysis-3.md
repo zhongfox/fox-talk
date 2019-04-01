@@ -22,7 +22,6 @@ Galley 原来仅负责进行配置验证, 1.1 后升级为整个控制面的配�
 今天对Galley的剖析大概有以下方面:
 
 - Galley 演进的背景
-
 - Galley 配置验证功能
 - MCP 协议
 - Galley 配置管理实现浅析
@@ -43,7 +42,7 @@ Galley 原来仅负责进行配置验证, 1.1 后升级为整个控制面的配�
 
 k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见一斑, 所以有人说面向k8s编程近似于面向yaml编程.
 
-早期的Galley 仅仅负责对「配置」进行运行时验证, istio 控制面各个组件各组去list/watch 各自关注的「配置」, 以下是istio早期的Configuration flow:
+早期的Galley 仅仅负责对「配置」进行运行时验证, istio 控制面各个组件各自去list/watch 各自关注的「配置」, 以下是istio早期的Configuration flow:
 
 ![](https://ws3.sinaimg.cn/large/006tKfTcgy1g1mbphtde5j31d20swae2.jpg)
 
@@ -55,12 +54,9 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 随着istio功能的演进, 可预见的istio CRD数量还会继续增加, 社区计划将Galley 强化为istio 「配置」控制层, Galley 除了继续提供「配置」验证功能外, 还将提供配置管理流水线, 包括输入, 转换, 分发, 以及适合istio控制面的「配置」分发协议(MCP).
 
-关于早期 istio 配置管理的演进计划, 可以参考2018年5月 CNCF KubeCon talk [Introduction to Istio Configuration - Joy Zhang](<https://www.youtube.com/watch?v=x1Tyw8dFKjI&index=2&t=0s&list=LLQ2StCCdx81xHxHxBO0foGA>) (需.翻.墙),  1.1 版本中Galley 也还未完全实现该文中的roadmap, 如 configuration pipeline 等. 未来Galley 还会继续演进.
-
- 本文对Galley的分析基于istio tag 1.1.1 (commit 2b13318)
+本文对Galley的分析基于istio tag 1.1.1 (commit 2b13318)
 
 ------
-
 
 
 ## Galley 配置验证功能
@@ -69,7 +65,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 ![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1mcwsf5ggj30sz0ecjt4.jpg)
 
-istio 需要一个关于ValidatingWebhook的配置项, 用于告诉k8s api server, 哪些crd应该发往哪个服务的哪个接口去做验证, 该配置名为istio-galley, 简化的内容如下:
+istio 需要一个关于ValidatingWebhook的配置项, 用于告诉k8s api server, 哪些CRD应该发往哪个服务的哪个接口去做验证, 该配置名为istio-galley, 简化的内容如下:
 
 ```yaml
 %kubectl get ValidatingWebhookConfiguration istio-galley -oyaml
@@ -117,7 +113,7 @@ h.HandleFunc("/admitmixer", wh.serveAdmitMixer)
 
 ## MCP协议
 
-MCP 提供了一套配置订阅和分发的API, 在MCP中, 可以抽象以下模型:
+MCP 提供了一套配置订阅和分发的API, 在MCP中, 可以抽象为以下模型:
 
 - source: 「配置」的提供端, 在Istio中Galley 即是source
 - sink: 「配置」的消费端, 在isito中典型的sink包括Pilot和Mixer组件
@@ -141,13 +137,10 @@ MCP 提供了gRPC 的实现, 实现代码参见: <https://github.com/istio/api/t
 ![](https://ws2.sinaimg.cn/large/006tKfTcgy1g1n7omb7vrj30uk0u0452.jpg)
 
 
-
 ------
 
 
-
 ## Galley 配置管理实现浅析
-
 
 
 galley 进程对外暴露了若干服务, 最重要的就是基于gRPC的mcp服务, 以及http的验证服务, 除此之外还提供了 prometheus exporter接口以及Profiling接口:
@@ -328,7 +321,7 @@ type Dispatcher struct {
 }
 ```
 
-State 实现了Galley的内存中的状态, 包括了Galley 管理的「配置」的schema、发布策略以及内容快照等:
+State 是对Galley的内存中的状态, 包括了Galley 当前持有「配置」的schema、发布策略以及内容快照等:
 
 ```go
 // State is the in-memory state of Galley.
@@ -489,8 +482,11 @@ func (con *connection) queueResponse(resp *WatchResponse) {
 
 最后上一张Galley mcp 服务相关模型UML:
 
-![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1na2tb44fj30sy1hk4mm.jpg)
+![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1nfe4qqjij30u012wthm.jpg)
 
+Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对「配置」数据源的抽象, Distributor 是「配置」快照存储的抽象, Watcher 是对「配置」订阅端的抽象. 抽象的具体实现可以组合起来使用. 另外Galley组件之间也充分解耦, 组件之间的数据源通过chan/watcher等流转.
+
+关于早期 istio 配置管理的演进计划, 可以参考2018年5月 CNCF KubeCon talk [Introduction to Istio Configuration - Joy Zhang](<https://www.youtube.com/watch?v=x1Tyw8dFKjI&index=2&t=0s&list=LLQ2StCCdx81xHxHxBO0foGA>) (需.翻.墙),  1.1 版本中Galley 也还未完全实现该文中的roadmap, 如 configuration pipeline 等. 未来Galley 还会继续演进.
 
 > 版权归作者所有, 欢迎转载, 转载请注明出处
 
