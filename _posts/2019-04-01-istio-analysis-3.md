@@ -482,9 +482,9 @@ func (con *connection) queueResponse(resp *WatchResponse) {
 
 最后上一张Galley mcp 服务相关模型UML:
 
-![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1nfe4qqjij30u012wthm.jpg)
+![](https://imfox.io/assets/images/istio-a/galley_uml.png)
 
-<a href="https://ws3.sinaimg.cn/large/006tKfTcgy1g1nfpb6wq9j30u012whdt.jpg" target="_blank">查看高清原图</a>
+<a href="https://imfox.io/assets/images/istio-a/galley_uml.png" target="_blank">查看高清原图</a>
 
 Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对「配置」数据源的抽象, Distributor 是「配置」快照存储的抽象, Watcher 是对「配置」订阅端的抽象. 抽象的具体实现可以组合起来使用. 另外Galley组件之间也充分解耦, 组件之间的数据源通过chan/watcher等流转.
 
@@ -498,4 +498,5 @@ Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对�
 
 - [Introduction to Istio Configuration ](<https://www.youtube.com/watch?v=x1Tyw8dFKjI&index=2&t=0s&list=LLQ2StCCdx81xHxHxBO0foGA>)
 - [google doc Mesh Configuration Protocol (MCP)](<https://docs.google.com/document/d/1o2-V4TLJ8fJACXdlsnxKxDv2Luryo48bAhR8ShxE5-k/edit#heading=h.qex63c29z2to>)
-- [github Mesh Configuration Protocol (MCP)](
+- [github Mesh Configuration Protocol (MCP)](<https://github.com/istio/api/tree/master/mcp>)
+
