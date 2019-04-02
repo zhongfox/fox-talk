@@ -212,6 +212,48 @@ layout: default
         };
         anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
     })
+
+  function requestFullScreen(elem) {
+      var dialogId = "full-screen-dialog";
+      var dialogImg = "full-screen-img";
+      var dialogCover = "full-screen-cover";
+      var dialogDom = document.getElementById(dialogId);
+      if(dialogDom){
+          document.getElementById(dialogImg).setAttribute("src", elem.getAttribute("src"));
+          dialogDom.setAttribute('style','display:block;position: fixed;height:100%;width: 100%;top: 0px;left: 0px;margin: 0px;padding: 0px;');
+      }else{
+          var img = document.createElement("img");
+          var div = document.createElement("div");
+          var divCover = document.createElement("div");
+          // 外框
+          div.setAttribute("id", dialogId);
+          div.setAttribute('style','position: fixed;height:100%;width: 100%;top: 0px;left: 0px;margin: 0px;padding: 0px;');
+          // 图片
+          img.setAttribute("id", dialogImg);
+          img.setAttribute('style','position: absolute;max-width: 80%;max-height: 90%;left: 50%;top: 50%;transform: translate(-50%, -50%)');
+          // 遮罩
+          divCover.setAttribute("id", dialogCover);
+          divCover.setAttribute('style','position: absolute;height:100%;width: 100%;background: rgba(0, 0, 0, 0.5);');
+          // 隐藏
+          divCover.addEventListener("click", function(){
+              document.getElementById(dialogId).setAttribute('style','display: none');
+          });
+          // 添加dom
+          div.appendChild(divCover);
+          div.appendChild(img);
+          document.body.appendChild(div);
+          document.getElementById(dialogImg).setAttribute("src", elem.getAttribute("src"));
+      }
+  }
+  var imgs = document.getElementsByTagName("img");
+  for (var index = 0; index < imgs.length; index++) {
+      var oneImg = imgs[index];
+      console.log(oneImg.onclick);
+      oneImg.addEventListener("click", function(elem){
+          requestFullScreen(this);
+      });
+  }
+
 </script>
 <style>
     /* place left on bigger screen */
