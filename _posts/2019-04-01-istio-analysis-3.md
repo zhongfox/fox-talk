@@ -166,6 +166,13 @@ go server.StartProbeCheck(livenessProbeController, readinessProbeController, gal
 ```
 
 
+| 服务端口名       | 默认端口 | path/method                                            | 功能                              |
+| ---------------- | -------- | ------------------------------------------------------ | --------------------------------- |
+| https-validation | 443      | /admitmixer<br />/admitpilot                           | 配置验证服务                      |
+| http-monitoring  | 15014    | /metrics<br />/version                                 | prometheus exporter<br />版本信息 |
+| grpc-mcp         | 9901     | EstablishResourceStream<br />StreamAggregatedResources | 配置管理服务                      |
+| 非服务暴露       | 9094     | /debug/pprof/*                                         | runtime profiling 信息            |
+
 
 接下来主要分析下「配置」管理服务的实现:
 
