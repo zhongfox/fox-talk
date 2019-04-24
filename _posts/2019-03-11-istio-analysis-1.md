@@ -4,6 +4,7 @@ tags : [container, kubernetes, istio, 微服务, mesh]
 title: istio 庖丁解牛(一) 组件概览
 
 ---
+<meta name=”referrer” content=”no-referrer” />
 
 > 作者: 钟华，腾讯云容器团队高级工程师，热衷于容器、微服务、service mesh、istio、devops 等领域技术
 

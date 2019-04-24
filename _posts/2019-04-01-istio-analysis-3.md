@@ -44,7 +44,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 早期的Galley 仅仅负责对「配置」进行运行时验证, istio 控制面各个组件各自去list/watch 各自关注的「配置」, 以下是istio早期的Configuration flow:
 
-![](https://ws3.sinaimg.cn/large/006tKfTcgy1g1mbphtde5j31d20swae2.jpg)
+<img src="https://ws3.sinaimg.cn/large/006tKfTcgy1g1mbphtde5j31d20swae2.jpg" referrerpolicy="no-referrer"/>
 
 越来越多且复杂的「配置」给istio 用户带来了诸多不便, 主要体现在:
 
@@ -63,7 +63,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 在[istio 庖丁解牛(二) sidecar injector](https://imfox.io/2019/03/19/istio-analysis-2/)中我分析了istio-sidecar-injector 如何利用 MutatingWebhook 来实现sidecar注入, Galley 使用了k8s提供的另一个Admission Webhooks: ValidatingWebhook, 来做配置的验证:
 
-![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1mcwsf5ggj30sz0ecjt4.jpg)
+<img src="https://ws1.sinaimg.cn/large/006tKfTcgy1g1mcwsf5ggj30sz0ecjt4.jpg" referrerpolicy="no-referrer"/>
 
 istio 需要一个关于ValidatingWebhook的配置项, 用于告诉k8s api server, 哪些CRD应该发往哪个服务的哪个接口去做验证, 该配置名为istio-galley, 简化的内容如下:
 
@@ -134,7 +134,7 @@ MCP 提供了gRPC 的实现, 实现代码参见: <https://github.com/istio/api/t
 
 两种模式的示意图如下:
 
-![](https://ws2.sinaimg.cn/large/006tKfTcgy1g1n7omb7vrj30uk0u0452.jpg)
+<img src="https://ws2.sinaimg.cn/large/006tKfTcgy1g1n7omb7vrj30uk0u0452.jpg" referrerpolicy="no-referrer"/>
 
 
 ------
@@ -182,11 +182,9 @@ go server.RunServer(serverArgs, livenessProbeController, readinessProbeControlle
 
 下面是Galley 配置服务结构示意图:
 
-![](https://ws1.sinaimg.cn/large/006tKfTcgy1g1mzi3oe9xj31r10u0qgp.jpg)
+<img src="https://ws1.sinaimg.cn/large/006tKfTcgy1g1mzi3oe9xj31r10u0qgp.jpg" referrerpolicy="no-referrer"/>
 
-
-
-<a href="https://ws2.sinaimg.cn/large/006tKfTcgy1g1n8o76s8yj31r10u0trx.jpg" target="_blank">查看高清原图</a>
+<a href="https://ws2.sinaimg.cn/large/006tKfTcgy1g1n8o76s8yj31r10u0trx.jpg" target="_blank" referrerpolicy="no-referrer">查看高清原图</a>
 
 从上图可以看到, Galley 配置服务主要包括 Processor 和 负责mcp通信的grpc Server.
 
