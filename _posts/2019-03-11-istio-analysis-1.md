@@ -5,8 +5,6 @@ title: istio 庖丁解牛(一) 组件概览
 
 ---
 
-<meta name="referrer" content="no-referrer" />
-
 > 作者: 钟华，腾讯云容器团队高级工程师，热衷于容器、微服务、service mesh、istio、devops 等领域技术
 
 Istio 作为 Service Mesh 领域的集大成者, 提供了流控, 安全, 遥测等模型, 其功能复杂, 模块众多,  有较高的学习和使用门槛,  本文会对istio 1.1 的各组件进行分析, 希望能帮助读者了解istio各组件的职责、以及相互的协作关系.
@@ -40,13 +38,11 @@ kiali-7c6f4c9874-vzb4t                        1/1       Running
 prometheus-66b7689b97-w9glt                   1/1       Running
 ```
 
-
-
 将istio系统组件细化到进程级别, 大概是这个样子:
 
-![](https://ws3.sinaimg.cn/large/006tKfTcgy1g187gshs79j315m0u0qct.jpg)
+<img src="https://ws3.sinaimg.cn/large/006tKfTcgy1g187gshs79j315m0u0qct.jpg" referrerpolicy="no-referrer"/>
 
-<a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" target="_blank">查看高清原图</a>
+<a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" referrerpolicy="no-referrer" target="_blank">查看高清原图</a>
 
 Service Mesh 的Sidecar 模式要求对数据面的用户Pod进行代理的注入, 注入的代理容器会去处理服务治理领域的各种「脏活累活」, 使得用户容器可以专心处理业务逻辑.
 
