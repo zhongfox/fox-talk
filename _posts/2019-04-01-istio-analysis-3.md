@@ -9,9 +9,9 @@ title: istio 庖丁解牛(三) galley
 
 今天我们来解析istio控制面组件Galley. Galley Pod是一个单容器单进程组件, 没有sidecar, 结构独立, 职责明确.
 
-![](https://ws4.sinaimg.cn/large/006tKfTcgy1g1maoldl74j31850u049x.jpg)
+<img src="https://ws4.sinaimg.cn/large/006tKfTcgy1g1maoldl74j31850u049x.jpg" referrerpolicy=“no-referrer” />
 
-<a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" target="_blank">查看高清原图</a>
+<a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" target="_blank" referrerpolicy=“no-referrer” />查看高清原图</a>
 
 前不久istio 1.1 版本正式发布, 其中istio的配置管理机制有较大的改进, 以下是[1.1 release note](https://istio.io/about/notes/1.1/) 中部分说明:
 
