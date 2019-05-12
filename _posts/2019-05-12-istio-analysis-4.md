@@ -207,19 +207,19 @@ Istio Config 控制器用于处理istio 流控CRD, 如VirtualService、Destinati
 
   这是一种「Controller Interface」, 同时也是「Store Interface」
 
-如上所述, inferface `ConfigStoreCache`包括了上一节中要求的2类接口, 目前实现了`ConfigStoreCache`接口的Istio Config 控制器主要有以下三种:
+如上所述, inferface `ConfigStoreCache`包括了上一节中要求的2类接口, 目前实现了interface `ConfigStoreCache`的Istio Config 控制器主要有以下三种:
 
 - 以k8s List/Watch方式获取config
 
-  具体实现 `pilot\pkg\config\kube\crd.controller`
+  具体实现位于 `pilot\pkg\config\kube\crd.controller`
 
 - 以MCP方式从`ConfigSources`获取, pilot 作为MCP client, `ConfigSources`从全局配置mesh config中获取
 
-  具体实现 `pilot\pkg\config\coredatamodel.Controller`
+  具体实现位于 `pilot\pkg\config\coredatamodel.Controller`
 
 - 从本地文件系统中获取, 主要用于测试场景
 
-  具体实现` pilot\pkg\config\memory.controller`
+  具体实现位于` pilot\pkg\config\memory.controller`
 
 #### 5.1 k8s List/Watch config 控制器
 
@@ -304,15 +304,15 @@ Service Discovery Config 控制器用于处理各平台服务发现数据, 如Se
 
 - 对接k8s 服务发现的控制器
 
-  具体实现 `pilot\pkg\serviceregistry\kube.Controller`
+  具体实现位于 `pilot\pkg\serviceregistry\kube.Controller`
 
 - 对接istio CRD ServiceEntry 的服务发现控制器
 
-  具体实现 `pilot\pkg\serviceregistry\external.ServiceEntryStore`
+  具体实现位于 `pilot\pkg\serviceregistry\external.ServiceEntryStore`
 
 - 对接consul 服务发现的控制器
 
-  具体实现 `pilot\pkg\serviceregistry\consul.Controller`
+  具体实现位于 `pilot\pkg\serviceregistry\consul.Controller`
 
 以上控制器带上ClusterID后, 被包装为Registry:
 
