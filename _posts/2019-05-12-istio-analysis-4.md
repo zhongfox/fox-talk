@@ -347,7 +347,7 @@ type Controller struct {
 
 `pilot\pkg\serviceregistry\kube.Controller`同时实现了上述2个interface, 利用client-go库从Kubernetes获取`pod` 、`service`、`node`、`endpoint`，并将这些CRD转换为istio中Service、ServiceInstance等统一抽象模型.
 
-```
+```go
 type Controller struct { // k8s service/node/ep的controller
   ......
   queue     Queue
@@ -401,7 +401,7 @@ func NewController(client kubernetes.Interface, options ControllerOptions) *Cont
 
 该Grpc Server 需要实现2个接口:
 
-```
+```go
 // AggregatedDiscoveryServiceServer is the server API for AggregatedDiscoveryService service.
 type AggregatedDiscoveryServiceServer interface {
   // This is a gRPC-only API.
@@ -444,5 +444,5 @@ type AggregatedDiscoveryServiceServer interface {
 
 ------
 
-以上对Pilot的能力和结构进行了分析, 下一篇将分析Pilot是如何将Config 转为为xDS.
+以上对Pilot的能力和结构进行了分析, 下一篇文章将分析Pilot是如何将Config 转为为xDS.
 
