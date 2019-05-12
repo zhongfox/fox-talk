@@ -416,7 +416,7 @@ type AggregatedDiscoveryServiceServer interface {
 
 2. DiscoveryServer将连接对象缓存到map中, key为下游node ID 加上连接计数器. 当检测到配置发生变化, 将会触发这些连接上的xDS重新push到下游. 这些配置变化可能是`Istio Config`、`Service Discovery Config`或者网格全局配置集.
 
-`DeltaAggregatedResources`是增量xDS接口, 目前在istio中还未实现.
+`DeltaAggregatedResources`是增量xDS订阅接口, 目前在istio中还未实现.
 
 #### 7.1 DiscoveryServer UML
 
