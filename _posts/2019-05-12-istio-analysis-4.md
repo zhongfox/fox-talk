@@ -146,7 +146,7 @@ metadata:
 
 在pilot容器定义中, 默认会将该ConfigMap挂载到`/etc/istio/config`目录, 2个配置集文件将分别位于`/etc/istio/config/mesh`和`/etc/istio/config/meshNetworks`
 
-```
+```yaml
     image: gcr.io/istio-release/pilot
     ......
     volumeMounts:
@@ -225,7 +225,7 @@ Istio Config 控制器用于处理istio 流控CRD, 如VirtualService、Destinati
 
 我们以在第一种方式k8s List/Watch的Config 控制器为例分析:
 
-```
+```go
 // pilot\pkg\config\kube\crd.controller
 type controller struct {
   client *Client
@@ -238,33 +238,33 @@ type controller struct {
 
 该controller对象在初始化过程中, 会为指定的 istio CRD 创建一个k8s informer, 这些CRD主要是:
 
-```
-  IstioConfigTypes = ConfigDescriptor{
-    VirtualService,
-    Gateway,
-    ServiceEntry,
-    DestinationRule,
-    EnvoyFilter,
-    Sidecar,
-    HTTPAPISpec,
-    HTTPAPISpecBinding,
-    QuotaSpec,
-    QuotaSpecBinding,
-    AuthenticationPolicy,
-    AuthenticationMeshPolicy,
-    ServiceRole,
-    ServiceRoleBinding,
-    AuthorizationPolicy,
-    RbacConfig,
-    ClusterRbacConfig,
-  }
+```go
+IstioConfigTypes = ConfigDescriptor{
+  VirtualService,
+  Gateway,
+  ServiceEntry,
+  DestinationRule,
+  EnvoyFilter,
+  Sidecar,
+  HTTPAPISpec,
+  HTTPAPISpecBinding,
+  QuotaSpec,
+  QuotaSpecBinding,
+  AuthenticationPolicy,
+  AuthenticationMeshPolicy,
+  ServiceRole,
+  ServiceRoleBinding,
+  AuthorizationPolicy,
+  RbacConfig,
+  ClusterRbacConfig,
+}
 ```
 
 并为每个informer 创建EventHandler, 在EventHandler中会将新的config event 包装为Task, 并push 到queue中.
 
 Run 方法进行queue中Task消费, Task中包括了事件类型, 对象, 以及处理函数链:
 
-```
+```go
 type Task struct {
   handler Handler
   obj     interface{}
@@ -316,7 +316,7 @@ Service Discovery Config 控制器用于处理各平台服务发现数据, 如Se
 
 以上控制器带上ClusterID后, 被包装为Registry:
 
-```
+```go
 // Registry specifies the collection of service registry related interfaces
 type Registry struct {
   // Name is the type of the registry - Kubernetes, Consul, etc.
@@ -331,7 +331,7 @@ type Registry struct {
 
 因为Pilot允许同时对接多个服务发现平台, 因此在实际使用中会将多个Registry聚合在一起使用:
 
-```
+```go
 // pilot\pkg\serviceregistry\aggregate.Controller
 type Controller struct {
   registries []Registry
