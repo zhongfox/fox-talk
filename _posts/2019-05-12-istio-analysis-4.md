@@ -13,7 +13,7 @@ Pilot 译为`领航员`, 在mesh中负责路由领航, 是istio控制面的核�
 
 在组件拓扑中, Pod  `istio-pilot`包括`istio-proxy`(sidecar)和`discovery`2个容器, pilot核心能力由容器 `discovery`中执行的命令`pilot-discovery discovery`提供.
 
-<img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2xqbirjadj31840u0hdt.jpg" referrerpolicy="no-referrer"/>
+![1.jpg](https://i.loli.net/2019/05/13/5cd8da4f2019872241.jpg)
 <a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" target="_blank" referrerpolicy="no-referrer">查看高清原图</a>
 
 在源代码中, package [github.com/istio/istio/tree/master/pilot/cmd](https://github.com/istio/istio/tree/master/pilot/cmd) 有三个命令的入口:
@@ -28,7 +28,7 @@ Pilot 译为`领航员`, 在mesh中负责路由领航, 是istio控制面的核�
 
 下图展示了当前istio(1.1.X) 中Pilot 的流程设计:
 
-<img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2yq2osydqj30po0hj79b.jpg" referrerpolicy="no-referrer"/>
+![2.jpg](https://i.loli.net/2019/05/13/5cd8da4ed477225375.jpg)
 <center>A conceptual diagram for Pilot’s current design（图片来自<a href="https://drive.google.com/drive/u/0/folders/0AIS5p3eW9BCtUk9PVA">Isio Community Doc</a>)</center>
 
 从图中可以看出Pilot的处理流程可以抽象为3层:
@@ -171,7 +171,7 @@ pilot在watch到「网格配置」变化后, 会触发xDS的重新计算, 并将
 
 Pilot对`Service Discovery Config`和`Istio Config`两大类数据的处理, 也是使用控制器模式, 不过Pilot中Config 控制器有特殊之处, 因为适配多种平台, Config 有多种来源可能, 除了k8s informer, 还可能是MCP, 文件系统, 或者consul client等等. 一个典型的Config 控制器, 可以用下图来描述:
 
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1g2yq3jl2alj30u90cbdhy.jpg" referrerpolicy="no-referrer"/>
+![3.jpg](https://i.loli.net/2019/05/13/5cd8da4f0f5eb79281.jpg)
 
 上图左边是描述Config来源, 右边描述Config 控制器的结构, 可以划分为三个部分:
 
@@ -280,7 +280,7 @@ type Task struct {
 
 #### 5.2 Istio Config UML
 
-<img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2xt1mzhijj30u01jd45l.jpg" referrerpolicy="no-referrer"/>
+![4.jpg](https://i.loli.net/2019/05/13/5cd8da4f5e69c79772.jpg)
 
 ------
 
@@ -389,7 +389,7 @@ func NewController(client kubernetes.Interface, options ControllerOptions) *Cont
 
 #### 6.2 Service Discovery Config UML
 
-<img src="https://ws1.sinaimg.cn/large/006tNc79gy1g2xtcxkhroj30u00xldoz.jpg" referrerpolicy="no-referrer"/>
+![5.jpg](https://i.loli.net/2019/05/13/5cd8da4f370d893939.jpg)
 
 ------
 
@@ -420,7 +420,7 @@ type AggregatedDiscoveryServiceServer interface {
 
 #### 7.1 DiscoveryServer UML
 
-<img src="https://ws3.sinaimg.cn/large/006tNc79gy1g2xu4jdbv1j311s0tm78z.jpg" referrerpolicy="no-referrer"/>
+![6.jpg](https://i.loli.net/2019/05/13/5cd8da4f7a8c483759.jpg)
 
 ------
 
@@ -434,7 +434,7 @@ type AggregatedDiscoveryServiceServer interface {
 
 下图是社区对Pilot解耦的方案提议:
 
-<img src="https://ws2.sinaimg.cn/large/006tNc79gy1g2xuyhc818j31ag0u0am6.jpg" referrerpolicy="no-referrer"/>
+![7.jpg](https://i.loli.net/2019/05/13/5cd8da4f7a4d082918.jpg)
 <center>Mesh Configuration APIs proposal（图片来自<a href="https://drive.google.com/drive/u/0/folders/0AIS5p3eW9BCtUk9PVA">Isio Community Doc</a>)</center>
 
 简要说明:
