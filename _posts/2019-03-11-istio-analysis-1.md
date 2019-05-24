@@ -56,10 +56,11 @@ Service Mesh 的Sidecar 模式要求对数据面的用户Pod进行代理的注�
 
 Isito 项目代码主要由以下2个git 仓库组成:
 
-| 仓库地址                       | 语言 | 模块                                                         |
-| ------------------------------ | ---- | ------------------------------------------------------------ |
+| 仓库地址                       | 语言 | 模块                                                                            |
+|--------------------------------|------|---------------------------------------------------------------------------------|
 | https://github.com/istio/istio | Go   | 包含istio控制面的大部分组件: pilot, mixer, citadel, galley, sidecar-injector等, |
-| https://github.com/istio/proxy | C++  | 包含 istio 使用的边车代理, 这个边车代理包含envoy和mixer client两块功能 |
+| https://github.com/istio/proxy | C++  | 包含 istio 使用的边车代理, 这个边车代理包含envoy和mixer client两块功能          |
+| https://github.com/istio/api   | Go   | 包含istio组件之间的API 以及资源配置定义, 使用 protobuf 进行定义                 |
 
 ### 2.1 istio/istio
 
@@ -92,6 +93,16 @@ istio proxy 项目使用的编译方式是Google出品的bazel,  bazel可以直�
 
 1. Envoy: 使用到Envoy的全部功能
 2. mixer client: 测量和遥测相关的客户端实现, 基于Envoy做扩展，通过RPC和Mixer server 进行交互,  实现策略管控和遥测
+
+### 2.3 istio/api
+
+https://github.com/istio/api 使用[protobuf](https://github.com/protocolbuffers/protobuf) 对Istio API 和资源进行定义, 包括:
+
+* 组件之间的API, 如 Mesh Configuration Protocol (MCP) 等。
+* 所有的Istio CRD, 如 VirtualService、DestinationRule 等。
+
+该项目会作为依赖包被istio主项目引用。
+
 
 后续我将对以上各个模块、命令以及它们之间的协作进行探究.
 
