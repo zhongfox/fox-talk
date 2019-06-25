@@ -21,7 +21,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.1 用户需求
 
-![image-20190619163440888](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtm5yr8tj30r30fm770.jpg)
+![image-20190619163440888](http://ww1.sinaimg.cn/large/006tNc79gy1g4dvmz4x9uj311g0nc1kx.jpg)
 
 第一个场景应用:多分支环境.
 
