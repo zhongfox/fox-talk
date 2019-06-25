@@ -21,8 +21,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.1 用户需求
 
-![image-20190626004051946](http://ww1.sinaimg.cn/large/006tNc79gy1g4dvmz4x9uj311g0nc1kx.jpg)
-
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dvmz4x9uj311g0nc1kx.jpg" referrerpolicy="no-referrer"/>
 
 
 第一个场景应用:多分支环境.
@@ -33,7 +32,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.2 全量环境复制
 
-![image-20190625231637296](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtml261uj31730u07wi.jpg)
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dtml261uj31730u07wi.jpg" referrerpolicy="no-referrer"/>
 
 容器和kubernetes技术的流行, 极大的降低了测试、开发以及生产环境的一体化的门槛, 利用容器技术, 我们可以快速的复制并编排出一套新的运行环境,  这种全量复制方式对于小型的系统比较合适, 但是对于规模庞大, 结构复杂的大型系统, 这种方式会遇到很多挑战:
 
@@ -46,7 +45,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 #### 1.3 分支增量复制+流量控制
 
 
-![image-20190619164634045](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtmniuwlj30dg0i1dhf.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtmniuwlj30dg0i1dhf.jpg" referrerpolicy="no-referrer"/>
 
 理想的情况是, 我们只维护一个主干环境, 通过增量且按需的方式复制, 获得分支环境. 新的分支环境既可以部署已有服务的新版本, 也可以对新服务进行部署, 通过流量控制策略灵活定义各环境中服务流量.
 
@@ -60,7 +59,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.4 在线商城系统
 
-![demo1](http://ww4.sinaimg.cn/large/006tNc79gy1g4dtmtlwdwj30o50vcwjy.jpg)
+<img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtmtlwdwj30o50vcwjy.jpg" referrerpolicy="no-referrer"/>
 
 所以让我们看看, 系统引入服务网格后, 可以如何优化这个场景.
 
@@ -74,7 +73,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.5 多分支环境场景
 
-![image-20190625150732535](http://ww4.sinaimg.cn/large/006tNc79gy1g4dtn2750sj31cx0u01hd.jpg)
+<img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtn2750sj31cx0u01hd.jpg" referrerpolicy="no-referrer"/>
 
 - jason希望验证推荐系统recommend 新版本v2, 这个版本在「推荐商品」区域上增加了一个banner.
 - 与此同时, fox正打算验证另一个的feature: 包括对discount 和 products的修改, 同时引入了新的收藏服务favorites. 其中discount v2在「折扣商品」区域上新增一个banner, 同时products服务会通过调用新的服务favorites获取商品的收藏人数, 然后返回给前端页面.
@@ -95,7 +94,7 @@ kubectl create namespace base
 
 #### 2.2 开启 base 命名空间中的sidecar自动注入功能
 
-![image-20190625150936619](http://ww4.sinaimg.cn/large/006tNc79gy1g4dtn74vsdj30y40pi40h.jpg)
+<img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtn74vsdj30y40pi40h.jpg" referrerpolicy="no-referrer"/>
 
 #### 2.3 安装base环境的服务
 
@@ -107,7 +106,7 @@ kubectl -nbase apply -f install/base_apps.yaml
 
 稍等片刻查看各应用运行正常:
 
-![image-20190625231800731](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtncf0iqj312s0fa1fj.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtncf0iqj312s0fa1fj.jpg" referrerpolicy="no-referrer"/>
 
 这时候网格里的服务还无法被外网访问到, 我们还需要对网格边缘流量进行配置.
 
@@ -117,7 +116,7 @@ Istio 使用 Gateway 定义网格边缘的流量行为, 对比原生的k8s ingre
 
 istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套的service, 包含proxy的pod, 以及绑定云平台LB, TKE Mesh Gateway对这些组件进行和整合, 用户只需要配置Gateway的基本流控规则, TKE Mesh会自动实现相关的service, proxy pod 以及腾讯云LB的配置.
 
-![image-20190625151405024](http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnhhfsej310c0u0763.jpg)
+<img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnhhfsej310c0u0763.jpg" referrerpolicy="no-referrer"/>
 
 
 
@@ -125,7 +124,7 @@ istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套�
 
 如果服务只有一个版本, 这里可以省略, 不过为了后面演示需要, 我们还是对mall应用创建一个版本v1:
 
-![image-20190625151928146](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtnlophjj317q0kctag.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtnlophjj317q0kctag.jpg" referrerpolicy="no-referrer"/>
 
 
 
@@ -133,7 +132,7 @@ istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套�
 
 gateway定义了入口流量的4层属性, 我们还需要一个virtualservice来定义七层路由, 将后端应用层服务挂到gateway上:
 
-![image-20190625152440456](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtnoxfmxj31090u0tbt.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtnoxfmxj31090u0tbt.jpg" referrerpolicy="no-referrer"/>
 
 现在可以访问mall首页验证应用正常运行, 大家都是访问base 基准环境.
 
@@ -155,7 +154,7 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
    kubectl apply -f install/jason-apps.yaml
    ```
 
-   ![image-20190625230534589](http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnspi0nj312i042gr0.jpg)
+   <img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnspi0nj312i042gr0.jpg" referrerpolicy="no-referrer"/>
 
 #### 3.2 通过TKE Mesh控制台发布新的路由策略:
 
@@ -166,15 +165,15 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
 
 服务网格提供了大量的基于流量内容匹配的规则: 这里我们选择使用header, 因为我们的登录信息在cookie里
 
-![image-20190625153127796](http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnujuhkj30v20u0n14.jpg)
+<img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dtnujuhkj30v20u0n14.jpg" referrerpolicy="no-referrer"/>
 
 #### 3.3 进行jason登录验证
 
-![image-20190625153251601](http://ww4.sinaimg.cn/large/006tNc79gy1g4dtnz1przj311h0u0wp3.jpg)
+<img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtnz1przj311h0u0wp3.jpg" referrerpolicy="no-referrer"/>
 
 注意一点, recommend服务还依赖scores服务,  我们对jason分支环境, 只定义了recommend服务的inbound流量规则, 对于从recommend v2 服务流出的outbound流量, 仍然会访问base 环境中现存的scores服务, 这也符合我们的预期:
 
-![image-20190625153425993](http://ww2.sinaimg.cn/large/006tNc79gy1g4dto5vwwmj30ws0u00y8.jpg)
+<img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dto5vwwmj30ws0u00y8.jpg" referrerpolicy="no-referrer"/>
 
 ------
 
@@ -197,7 +196,7 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
 kubectl apply -f install/fox-apps.yaml
 ```
 
-![image-20190625154125008](http://ww2.sinaimg.cn/large/006tNc79gy1g4dto90hjsj313606ojxv.jpg)
+<img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dto90hjsj313606ojxv.jpg" referrerpolicy="no-referrer"/>
 
 #### 4.2 通过TKE Mesh控制台发布fox路由策略
 
@@ -205,7 +204,7 @@ kubectl apply -f install/fox-apps.yaml
 
 2. 对于products服务的访问流量(inbound), 判断访问流量的来源, 如果属于`fox`环境, 则路由到fox下products, 其他流量仍路由到base环境
 
-   ![image-20190625232857149](http://ww4.sinaimg.cn/large/006tNc79gy1g4dtobrkx5j30xc0u042d.jpg)
+   <img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtobrkx5j30xc0u042d.jpg" referrerpolicy="no-referrer"/>
 
 3. 新服务favorites只存在于namespace `fox`中,同样我们通过来源判断, 限制其访问流量(inbound), 只能来自`fox`环境. (图略)
 
@@ -213,11 +212,11 @@ kubectl apply -f install/fox-apps.yaml
 
 #### 4.3 应用成功后, 进行fox登录访问验证:
 
-![image-20190625154406213](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtohldqgj317k0u0wzb.jpg)
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dtohldqgj317k0u0wzb.jpg" referrerpolicy="no-referrer"/>
 
 #### 4.4 查看服务拓扑变化
 
-![image-20190625154511145](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtokqd7fj30wj0u0dm5.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtokqd7fj30wj0u0dm5.jpg" referrerpolicy="no-referrer"/>
 
 
 
@@ -237,7 +236,7 @@ kubectl apply -f install/fox-apps.yaml
 - RPC串行并行逻辑优化
 - 请求合并优化
 
-![image-20190625224001714](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtop68y2j30u00xvdwe.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtop68y2j30u00xvdwe.jpg" referrerpolicy="no-referrer"/>
 
 
 
@@ -263,13 +262,13 @@ kubectl apply -f install/fox-apps.yaml
 kubectl apply -f install/mall-v2-apps.yaml
 ```
 
-![image-20190625222247839](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtotfwtcj30zy0fk14t.jpg)
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dtotfwtcj30zy0fk14t.jpg" referrerpolicy="no-referrer"/>
 
 
 
 #### 6.2 新建mall v2 版本:
 
-![image-20190625222412663](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtoxe8cnj312i0cgwf9.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtoxe8cnj312i0cgwf9.jpg" referrerpolicy="no-referrer"/>
 
 创建以后仍然不会有访问流量, 因为之前的配置mall应用只会访问v1.
 
@@ -277,20 +276,20 @@ kubectl apply -f install/mall-v2-apps.yaml
 
 修改mall 路由策略, 按照权重50-50 路由到v1和v2版本:
 
-![image-20190625222550870](http://ww2.sinaimg.cn/large/006tNc79gy1g4dtp05k68j31180kctam.jpg)
+<img src="http://ww2.sinaimg.cn/large/006tNc79gy1g4dtp05k68j31180kctam.jpg" referrerpolicy="no-referrer"/>
 
 #### 6.4 验证
 
 访问页面, 版本v1 和v2 随机切换, 验证新版本无异常, 可以查看基准环境拓扑变化:
 
-![image-20190625225644103](http://ww3.sinaimg.cn/large/006tNc79gy1g4dtp3hueuj30we0u0dlq.jpg)
+<img src="http://ww3.sinaimg.cn/large/006tNc79gy1g4dtp3hueuj30we0u0dlq.jpg" referrerpolicy="no-referrer"/>
 
 查看v2版本的全链路跟踪, 确认请求性能得到优化:  mall 服务调用users, recommend, discount服务方式, 从串行改为了并行, 理论耗时从三次访问耗时之和降低为三次访问耗时的最大值.
 
-![image-20190625225236726](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtp78zuuj31270u0wlf.jpg)
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dtp78zuuj31270u0wlf.jpg" referrerpolicy="no-referrer"/>
 
 #### 6.4 完成发布
 
 将流量全部切为 mall v2:
 
-![image-20190625225433619](http://ww1.sinaimg.cn/large/006tNc79gy1g4dtpbhu2nj31h40sotbe.jpg)
+<img src="http://ww1.sinaimg.cn/large/006tNc79gy1g4dtpbhu2nj31h40sotbe.jpg" referrerpolicy="no-referrer"/>
