@@ -7,7 +7,7 @@ title: 腾讯云TKE Mesh 实践
 
 腾讯云 TKE Mesh 在 Kubecon-CloudNativecon China 2019 上对外发布, 以下是同场活动中「Application Level Networking」的现场demo部分.
 
-demo 涉及代码: https://github.com/TencentCloudContainerTeam/tcm-demo
+demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 ## 1. 背景介绍
 
