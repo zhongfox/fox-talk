@@ -294,4 +294,6 @@ kubectl apply -f install/mall-v2-apps.yaml
 
 <img src="https://i.loli.net/2019/06/26/5d12d126e2c7549273.jpg" referrerpolicy="no-referrer"/>
 
-验证系统运行服务预期.
+验证系统运行符合预期.
+
+对于问题「recommend服务调用scores服务是每次rpc查询单个商品, 6个商品总共发生6次请求往返, 耗时累加」, 现场不再演示修复过程, 感兴趣的读者可以在tke mesh上, 尝试解决该问题, 将6次请求往返优化为一次批量查询.
