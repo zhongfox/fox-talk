@@ -164,3 +164,8 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 ![image-20190711111204501](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040129.png)
 
 如果业务强依赖「监听pod ip」, 而不愿意改造为「监听0.0.0.0」, 可以考虑实施方案2, 方案2中各种访问路由都是透明联通的, 损失的仅仅是在场景「pod调用自身service, 且service刚好负载均衡到当前pod」中的server side 流控, 在istio中, 大部分流控功能是在client side 实现的, 通常可以接受.
+
+---
+
+* github issue: <https://github.com/istio/istio/issues/14738>
+* discuss.istio: <https://discuss.istio.io/t/user-process-listen-to-pod-ip-result-to-traffic-failure/2643>
