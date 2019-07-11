@@ -17,13 +17,12 @@ pilot会下发XDS给数据面的pod,当前pod 接收到的inbound cluster配置�
 这个代表本机的常量是在istio的pilot源码中写死的. 
 
 ```
-	// LocalhostAddress for local binding
-	LocalhostAddress = "127.0.0.1"
+// LocalhostAddress for local binding
+LocalhostAddress = "127.0.0.1"
 
-	// LocalhostIPv6Address for local binding
-	LocalhostIPv6Address = "::1"
+// LocalhostIPv6Address for local binding
+LocalhostIPv6Address = "::1"
 ```
-
 
 
 先说结论, 对于绝大部分场景, 用户服务进程监听的ip是`0.0.0.0`. 这种服务可以透明加入istio 服务网格, 但是如果用户进程监听的本机具体ip(pod ip), 这种服务无法直接加入当前isito服务网格.
@@ -34,15 +33,7 @@ pilot会下发XDS给数据面的pod,当前pod 接收到的inbound cluster配置�
 
 - localhost: 是一个域名, 通常在系统hosts文件中指向ip `127.0.0.1`(ipv4) 和 `::1`(ipv6), 理论上可以任意修改为其他ip
 
-- 127.0.0.1: 这个地址通常分配给 loopback 接口。loopback 是一个特殊的网络接口, 可理解成虚拟网卡，用于本机中各个应用之间的网络交互, loopback让本机交互数据包不用走实际的物理网卡, Linux中这个接口叫 lo：
-
-  ```
-  #ifconfig
-  lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-          inet 127.0.0.1  netmask 255.0.0.0
-  ```
-
-  lo 接口的地址是 127.0.0.1。事实上整个 127.* 网段都算能够使用，比如你 ping 127.0.0.2 也是通的.
+- 127.0.0.1: 这个地址通常分配给 loopback 接口。loopback 是一个特殊的网络接口
 
   但是使用127.0.0.1作为loopback接口的默认地址只是一个**惯例**, 理论上可以配置为其他ip.
 
@@ -56,15 +47,15 @@ pilot会下发XDS给数据面的pod,当前pod 接收到的inbound cluster配置�
 
 ![image-20190711110015870](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040032.png)
 
-左下角的红框正是istio的问题: 出于安全考虑或者其他历史原因, 业务中往往存在 listen 本机具体ip 这种方式, 结合上面的结论, 我们会发现这种服务是无法加入istio 的服务网格.
+左下角的红框正是istio的问题: 出于安全考虑或者其他历史原因, 业务中往往存在 listen 本机具体ip这种方式, 因为istio中envoy把流量终点发往`127.0.0.1`, 我们会发现这种服务是无法加入istio 的服务网格.
 
 ------
 
-## 2. 尝试修复
+## 2. 尝试修复: 转发终点改为pod ip
 
-通过修改istio 下发xds代码, 将下发的终点`socket_address`由`127.0.0.1`改为当前pod的ip地址, 核心部分代码见commit: [use pod ip as inbound end](https://github.com/zhongfox/istio/commit/dd0ef4e02f5661b4448d63c55ddcb9d86fe3ee34#diff-f507fb55b7edf4a03d3c7e9aebf64a1e), 构建并部署.
+通过修改istio 下发xds的源码, 将下发的终点`socket_address`由`127.0.0.1`改为当前pod的ip地址, 核心部分代码见commit: [use pod ip as inbound end](https://github.com/zhongfox/istio/commit/dd0ef4e02f5661b4448d63c55ddcb9d86fe3ee34#diff-f507fb55b7edf4a03d3c7e9aebf64a1e), 构建并部署.
 
-测试bookinfo, 发现访问不通, 查看生成的xds, 确认`socket_address`改动生效.
+测试bookinfo, 发现访问不通, 查看生成的xds, 确认`socket_address`改动是生效的.
 
 继续调试, 发现envoy 发出的pod ip 流量被iptables拦截回了envoy, 形成死循环:
 
@@ -81,6 +72,12 @@ pilot会下发XDS给数据面的pod,当前pod 接收到的inbound cluster配置�
 数据面的每个Pod会被注入一个名为`istio-init` 的initContainer, initContrainer是K8S提供的机制，用于在Pod中执行一些初始化任务. Istio 默认注入的initContainer 会在容器网络空间中配置若干iptables, 这些iptables主要用于拦截用户容器的出入流量, 发到代理进程envoy, 因此envoy才有机会实现相关的流量管控.
 
 在部署好istio和bookinfo的环境中, 我们尝试查看details服务对应pod的iptables规则:
+
+```
+# 先通过docker ps 找到details容器对应的id, 进入容器查看iptables
+$ docker exec -it --privileged a81fa3ab95c2 sh
+$ sudo iptables -t nat -L
+```
 
 ![image-20190710194910115](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040047.png)
 
@@ -107,7 +104,7 @@ if [ -z "${DISABLE_REDIRECTION_ON_LOCAL_LOOPBACK-}" ]; then
 fi
 ```
 
-原来, 规则1是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, 负载均衡逻辑将这次访问转发到了当前的pod id, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
+原来, 规则1是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod id, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
 
 ![image-20190711110056127](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040050.png)
 
@@ -133,7 +130,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 
 ------
 
-## 4. 再次尝试改造
+## 4. 再次改造: 转发终点+iptables调整
 
 测试pilot下发终点`socket_address`为pod ip, 并且去掉iptables 规则1: 
 
@@ -153,7 +150,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 
 ![image-20190710230302727](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040120.png)
 
-访问验证, 发现: details 调用details服务price接口的span, 只存在client端的一条, 验证符合期望.
+访问验证, 发现: details 调用details服务price接口的span, 只存在client端的一条, 而server 端的流量没有被拦截, 因此无法进行流量控制(这里是遥测).
 
 ------
 
