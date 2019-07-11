@@ -106,7 +106,7 @@ fi
 
 原来, 规则1是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod id, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
 
-![image-20190711110056127](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040050.png)
+![image-20190711194210456](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122132.png)
 
 上图中output流量的第4步和第5步间的iptables规则, 正是规则1:
 
@@ -134,7 +134,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 
 测试pilot下发终点`socket_address`为pod ip, 并且去掉iptables 规则1: 
 
-![image-20190711110122727](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040109.png)
+![image-20190711195219221](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122136.png)
 
 1. 将pilot 修改为改造后的版本
 
@@ -161,7 +161,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 1. 如果保留iptables 规则 1, 可以获得「调用自身的ip场景」的两端流量管控能力. 但是无法满足「服务监听pod ip接入mesh」的需求
 2. 如果改造pilot, 下发终点`socket_address`为pod ip, 同时去掉iptables 规则1, 可以实现「服务监听pod ip接入mesh」的需求, 但是对于「调用自身的ip场景」, 只会存在client端的流量管控能力
 
-![image-20190711111204501](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040129.png)
+![image-20190711202120481](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122140.png)
 
 如果业务强依赖「监听pod ip」, 而不愿意改造为「监听0.0.0.0」, 可以考虑实施方案2, 方案2中各种访问路由都是透明联通的, 损失的仅仅是在场景「pod调用自身service, 且service刚好负载均衡到当前pod」中的server side 流控, 在istio中, 大部分流控功能是在client side 实现的, 通常可以接受.
 
