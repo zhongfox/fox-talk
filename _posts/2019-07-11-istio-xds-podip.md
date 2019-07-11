@@ -47,7 +47,7 @@ LocalhostIPv6Address = "::1"
 
 ![image-20190711110015870](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040032.png)
 
-左下角的红框正是istio的问题: 出于安全考虑或者其他历史原因, 业务中往往存在 listen 本机具体ip这种方式, 因为istio中envoy把流量终点发往`127.0.0.1`, 我们会发现这种服务是无法加入istio 的服务网格.
+右下角的红框正是istio的问题: 出于安全考虑或者其他历史原因, 业务中往往存在 listen 本机具体ip这种方式, 因为istio中envoy把流量终点发往`127.0.0.1`, 我们会发现这种服务是无法加入istio 的服务网格.
 
 ------
 
