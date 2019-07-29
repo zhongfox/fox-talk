@@ -395,7 +395,7 @@ export CONTROL_PANEL_GW=$(kubectl --context guangzhou -n istio-system get servic
 % export SG_INGRESS=$(kubectl -n istio-system --context singapore get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-2) 将各集群ip配置到网格全局配置中:
+2) 将各集群ip配置到网格全局配置中(替换IP):
 
 ```
 % kubectl --context guangzhou -n istio-system edit cm istio
@@ -456,7 +456,7 @@ env:
 
 至此, 由广州和新加坡2个异地集群组成的服务网格已经搭建完成, 我们来验证一下:
 
-我们在2个集群中分别部署一套在线电子商城demo, 其中的推荐系统(recommend), 广州集群部署v1版本, 新加坡集群部署v2版本, 其中recommend v1 版本不包含banner, recommend v2 版本会显示一个banner:
+我们在2个集群中分别部署一套在线电子商城 demo( github.com/TencentCloudContainerTeam/tcm-demo), 其中的推荐系统(recommend), 广州集群部署v1版本, 新加坡集群部署v2版本, 其中recommend v1 版本不包含banner, recommend v2 版本会显示一个banner:
 
 ```
 % kubectl --context guangzhou apply -f install/primarycluster-apps.yaml
