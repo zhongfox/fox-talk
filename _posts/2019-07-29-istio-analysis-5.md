@@ -531,8 +531,8 @@ spec:
 
 ![image-20190729145727003](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135126.png)
 
-还可以通过工具 istioctl 查看xDS数据, 比如我们查看广州集群 mall pod获得的xDS, 其中关于recommend服务的endpoints中, 我们可以看到有2个:
+还可以通过工具 istioctl 查看xDS数据, 比如我们查看广州集群 mall pod获得的xDS, 其中有2个 recommend 服务的endpoints:
 
 ![image-20190729150633160](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135120.png)
 
-`172.25.0.26:7000`是广州集群的recommend v1 pod, 而`119.28.109.157:443`对应的是新加坡集群recommend v2 pod. 这些服务实例对业务代码来说是透明的, 访问recommend服务可以随机路由到任一集群。
+`172.25.0.26:7000`是广州集群的 recommend v1 pod, 而`119.28.109.157:443`对应的是新加坡集群recommend v2 pod. 这些服务实例对业务代码来说是透明的, 访问 recommend 服务可以随机路由到任一集群。
