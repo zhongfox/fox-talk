@@ -2,7 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: istio 庖丁解牛(五) 多集群网格实现分析
-header-img: assets/images/istio/boats.png
+header-img: assets/images/istio/boats_new.png
 
 ---
 
