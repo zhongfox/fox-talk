@@ -208,7 +208,7 @@ spec:
 
 我们看看以上的 Gateway `cluster-aware-gateway` 443 端口开启`AUTO_PASSTHROUGH` 后的 xDS 效果:
 
-![image-20190730102235679](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-30-022239.png)
+![image-20190730103626893](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-30-023631.png)
 
 其中 Listener Filter `envoy.listener.tls_inspector` 会检测传输是否是 TLS, 如果是的话, 会进一步提取 SNI (或者 ALPN), SNI 信息在后续 FilterChain 中可以用来路由。
 
