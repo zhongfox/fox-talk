@@ -196,13 +196,23 @@ spec:
 
 ![image-20190729173523592](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135209.png)
 
-##### 关于 TLS AUTO_PASSTHROUGH
+##### 关于 mTLS 和 AUTO_PASSTHROUGH
 
-通常来说, istio Ingress Gateway 需要配套指定服务的 VirtualService, 用以指定 ingress 流量的后端服务. 但在此拓扑中, 该 ingress Gateway 需要作为本数据面所有服务的流量入口. 也就是所有服务共享单个 ingress gateway (单个 IP), 这里其实是利用了 TLS 中的 SNI(Server Name Indication).
+通常来说, istio Ingress Gateway 需要配套指定服务的 VirtualService, 用以指定 ingress 流量的后端服务. 但在此拓扑中, 该 ingress Gateway 需要作为本数据面所有服务的流量入口. 也就是所有服务共享单个 ingress gateway (单个 IP), 这里其实是利用了 TLS 中的 [SNI(Server Name Indication)](https://en.wikipedia.org/wiki/Server_Name_Indication)。
 
 > SNI(Server Name Indication)指定了 TLS 握手时要连接的 主机名。 SNI 协议是为了支持同一个 IP(和端口)支持多个域名
 
 传统的 Ingress Gateway 承载的是南北流量(server-client), 这里的 Ingress Gateway 属于网格内部流量, 承载的是东西流量(server-server).
+
+设置`AUTO_PASSTHROUGH`, 可以允许服务无需配置 VirtualService, 而直接使用 TLS 中的 SNI 值来表示 upstream, 服务相关的 service/subset/port 都可以编码到 SNI 内容中.
+
+我们看看以上的 Gateway `cluster-aware-gateway` 443 端口开启`AUTO_PASSTHROUGH` 后的 xDS 效果:
+
+![image-20190730102235679](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-30-022239.png)
+
+其中 Listener Filter `envoy.listener.tls_inspector` 会检测传输是否是 TLS, 如果是的话, 会进一步提取 SNI (或者 ALPN), SNI 信息在后续 FilterChain 中可以用来路由。
+
+Network Filter `envoy.filters.network.sni_cluster` 会利用 SNI 信息来判断 upstream cluster, 该 filter 不会影响非 TLS 的连接。
 
 #### 2.4 控制面 mTLS 认证
 
@@ -276,6 +286,7 @@ tls_context:
 ```
 
 ![image-20190729173651673](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135204.png)
+
 
 #### 2.4 开启服务间 mTLS 认证
 
