@@ -169,17 +169,17 @@ RequestId用来关联request和对应的response，请求报文中携带一个�
 
 1. client 端 http request 转grpc:
 
-场景: client端只支持http1, 但是要和grpc server 端通信:
+   场景: client端只支持http1, 但是要和grpc server 端通信:
 
-<https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/grpc_bridge>
+   <https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/grpc_bridge>
 
 2. server 端grpc 转http:
 
-场景: server 端只支持http1, 但是要和grpc client 端通信:
+   场景: server 端只支持http1, 但是要和grpc client 端通信:
 
-<https://www.envoyproxy.io/docs/envoy/latest/configuration/http_filters/grpc_http1_bridge_filter#config-http-filters-grpc-bridge>
+   <https://www.envoyproxy.io/docs/envoy/latest/configuration/http_filters/grpc_http1_bridge_filter#config-http-filters-grpc-bridge>
 
-假设http1 是一种私有协议的话, 这2个filter 功能非常类似我们要做的「协议透明转换」filter.
+   假设http1 是一种私有协议的话, 这2个filter 功能非常类似我们要做的「协议透明转换」filter.
 
 #### 7.2 蚂蚁金服service mesh产品 SOFAMesh 的通用协议扩展:
 
