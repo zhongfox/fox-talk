@@ -172,7 +172,7 @@ singapore-LB = 100 - guangzhou-LB
 
 编写一个 [ruby 程序](https://github.com/zhongfox/multicluster-demo/blob/master/install/recommend_stat.rb) 进行验证：
 
-最初 recommend v1 副本数为 14， recommend unhealthy 副本数为 0， 一直保持 2 个 deployment 的副本总和为 14， 逐渐增加 unhealthy 副本的比重， 等待所有 pod ready 后， 使用广州网关入口发起 1000 次请求， 然后根据请求内容判断 recommend 服务的负载均衡情况：如果内容不包含 recommend banner，是由广州集群提供服务， 如果内容包括 recommend banner， 那么请求就是转移到了新加坡集群，测试结果如下图：
+最初 recommend v1 副本数为 14， recommend unhealthy 副本数为 0， 一直保持 2 个 deployment 的副本总和为 14， 逐渐增加 unhealthy 副本的比重， 等待所有 pod ready 后， 使用广州网关入口发起 1000 次请求， 然后根据响应内容判断 recommend 服务的负载均衡情况：如果内容不包含 recommend banner，是由广州集群提供服务， 如果内容包括 recommend banner， 那么请求就是转移到了新加坡集群，测试结果如下图：
 
 ```shell
 ruby ./install/recommend_stat.rb --ip 134.175.211.151 --count 1000
