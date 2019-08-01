@@ -551,7 +551,7 @@ spec:
 
 ![image-20190729150633160](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135120.png)
 
-`172.25.0.26:7000`是广州集群的 recommend v1 pod, 而`119.28.109.157:443`对应的是新加坡集群 recommend v2 pod. 这些服务实例对业务代码来说是透明的, 访问 recommend 服务可以随机路由到任一集群。
+`172.25.0.26:7000`是广州集群的 recommend v1 pod, 而`119.28.109.157:443` (新加坡 ingress gateway)在这里对应的是新加坡集群 recommend v2 的服务实例. 这些服务实例对业务代码来说是透明的, 访问 recommend 服务可以随机路由到任一集群。
 
 ---
 
