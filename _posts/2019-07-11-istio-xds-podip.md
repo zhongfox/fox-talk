@@ -1,7 +1,7 @@
 ---
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
-title: 服务监听pod id 在istio中路由异常分析
+title: 服务监听pod ip 在istio中路由异常分析
 subtitle:   "istio 踩坑记一"
 
 ---
