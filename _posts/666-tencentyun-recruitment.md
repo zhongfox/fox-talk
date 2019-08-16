@@ -1,7 +1,7 @@
 ---
 layout: post
 tags : [recruitment]
-title: 腾讯云成都招聘
+title: 腾讯云容器中心招聘
 
 ---
 
