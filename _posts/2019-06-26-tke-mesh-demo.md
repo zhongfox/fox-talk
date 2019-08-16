@@ -2,6 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: 腾讯云TKE Mesh 实践
+header-img: assets/images/istio/shanghai_2.jpg
 
 ---
 
