@@ -2,6 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: istio 庖丁解牛(一) 组件概览
+header-img: assets/images/istio/istioistio.png
 
 ---
 

@@ -3,6 +3,7 @@ layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: 服务监听pod ip 在istio中路由异常分析
 subtitle:   "istio 踩坑记一"
+header-img: assets/images/istio/shanghai_2.jpg
 
 ---
 
