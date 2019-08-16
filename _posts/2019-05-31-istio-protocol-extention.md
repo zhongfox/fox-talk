@@ -2,7 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: 基于服务网格的测试环境路由治理方案
-header-img: assets/images/istio/boats_new.png
+header-img: assets/images/istio/shanghai_2.jpg
 
 ---
 

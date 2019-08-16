@@ -2,6 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: istio 庖丁解牛(四) pilot discovery
+header-img: assets/images/istio/istioistio.png
 
 ---
 

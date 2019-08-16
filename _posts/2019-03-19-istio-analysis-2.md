@@ -2,6 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh]
 title: istio 庖丁解牛(二) sidecar injector
+header-img: assets/images/istio/istioistio.png
 
 ---
 
