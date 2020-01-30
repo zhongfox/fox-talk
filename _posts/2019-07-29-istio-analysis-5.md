@@ -28,7 +28,7 @@ Istio 并不是单一领域的技术, 它综合了诸多服务治理领域的解
 
 
 
-![Shared Istio control plane topology spanning multiple Kubernetes clusters using gateways](https://istio.io/docs/setup/kubernetes/install/multicluster/shared-gateways/diagram.svg)
+![Shared Istio control plane topology spanning multiple Kubernetes clusters using gateways](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-01-30-diagram.svg)
 
 
 

@@ -34,7 +34,7 @@ header-img: assets/images/istio/boats_new.png
 
  ![image-20190730161028904](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-132343.png)
 
-现在我们把广州集群 recommend v1 服务扩容为 1 个副本，将新加坡集群 recommend v2 服务副本数降至 0，类似的， 我们可以验证， 两地访问商城应用， 页面显示都正常，而且显示的都是广州集群无 banner 的 recommend v1 版本：
+现在我们把广州集群 recommend v1 服务恢复为 1 个副本，将新加坡集群 recommend v2 服务副本数降至 0，类似的， 我们可以验证， 两地访问商城应用， 页面显示都正常，而且显示的都是广州集群无 banner 的 recommend v1 版本：
 
 ![image-20190730162048948](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-132349.png)
 
@@ -182,7 +182,8 @@ ruby ./install/recommend_stat.rb --ip 134.175.211.151 --count 1000
 
 数据统计可以看出，广州健康副本（v1）由 14 个下降到 10 个的过程中，不会出现流量降级到新加坡，当广州健康副本数低于 10 个后，部分流量将会被负载均衡的新加坡集群：
 <div id="container" style="height: 500px;"></div>
-<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<!-- script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts.min.js"></script>
 <script type="text/javascript">
 var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
