@@ -13,6 +13,7 @@ title: 常用测试和调试工具
 
 #### 参数
 
+* -l Accept variable document length (use this for dynamic pages), 对于动态页面需要加上，否则会因为响应大小不一致而判定失败
 * -n 总的请求数
 * -c 次同时并发的请求数 `总的请求数(n)=次数*一次并发数(c)`
 * -t 执行多少秒的测试, -n自动设置为5000, 但是测试时可能超过这个数量
