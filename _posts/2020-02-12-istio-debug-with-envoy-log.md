@@ -37,7 +37,6 @@ demo 环境为腾讯云 TKE，isito 版本 1.4.3，代码归档于：[github.com
 以上就是 envoy 请求处理的 **流量五元组信息**， 这是 envoy 日志里最重要的部分，通过这个五元组我们可以准确的观测流量「从哪里来」和「到哪里去」。
 
 * UPSTREAM_CLUSTER
-
 * DOWNSTREAM_REMOTE_ADDRESS
 * DOWNSTREAM_LOCAL_ADDRESS
 * UPSTREAM_LOCAL_ADDRESS
@@ -67,7 +66,7 @@ accessLogEncoding: 'JSON' # 默认日志是单行格式， 可选设置为 JSON
 kubectl apply -f sleep-hello.yaml
 ```
 
-![image-20200212120321482](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-055015.png)
+![image-20200212222251433](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142255.png)
 
 该文件定义了 2个版本的 helloworld 和一个 sleep Pod，helloworld service 的端口是 4000， 而 pod 的端口是5000。
 
@@ -82,17 +81,17 @@ kubectl apply -f sleep-hello.yaml
 
 这时候我们可以去分析 2 个 pod 各自的envoy 日志：
 
-![image-20200212121035814](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-055025.png)
+![image-20200212222055391](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142111.png)
 
 用一张图来说明：
 
-![image-20200205011001808](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-04-171003.png)
+![image-20200212223945019](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-143947.png)
 
 从日志中我们可以分析出：
 
-对于 sleep pod， sleep app 发出的流量目的端是 hello service ip 和 service port，sleep envoy 处理的是 outbound 流量， envoy 根据规则选择的 「UPSTREAM_CLUSTER 」是 「outbound|4000||helloworld.default.svc.cluster.local 」, 然后转发给其中的一个 「UPSTREAM_HOST 」, 也就是 hello pod 的 ip 和port。
+对于 sleep pod， sleep app 发出的流量目的端是 hello service ip 和 service port，sleep envoy 处理的是 outbound 流量， envoy 根据规则选择的 「UPSTREAM_CLUSTER 」是`outbound|4000||helloworld.default.svc.cluster.local `, 然后转发给其中的一个 「UPSTREAM_HOST 」, 也就是 hello pod 的 ip 和port。
 
-对于 hello pod，其 envoy 处理的是 inbound 流量，envoy 根据规则选择的 「UPSTREAM_CLUSTER 」 是 「inbound|4000|http|helloworld.default.svc.cluster.local 」, 其中的 「UPSTREAM_HOST 」 是 「127.0.0.1:5000 」, 也就是该 pod 里的 hello app。
+对于 hello pod，其 envoy 处理的是 inbound 流量，envoy 根据规则选择的 「UPSTREAM_CLUSTER 」 是`inbound|4000|http|helloworld.default.svc.cluster.local `, 其中的 「UPSTREAM_HOST 」 是 「127.0.0.1:5000 」, 也就是该 pod 里的 hello app。
 
 因此，我们可以总结出 istio 中流量端点值的逻辑规则：
 
@@ -179,11 +178,12 @@ spec:
 
 从 sleep 中访问发现响应 503：
 
-![image-20200212112500321](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-032502.png)
+![image-20200212222518280](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142520.png)
+
 
 如果没有上下文，我们很难判断 503 是来自业务容器还是 sidecar，查看 sleep 和 hello 的 envoy 日志，可以发现：hello pod 的envoy 没有接受到请求，sleep pod 的 envoy 里日志：
 
-![image-20200212112208847](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-032211.png)
+![image-20200212222631659](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142634.png)
 
 其中`"response_flags": "NR"`  表示「No route configured」，也就是 envoy 找不到路由，我们可以判断出该异常是有 envoy 返回。
 
@@ -208,7 +208,7 @@ spec:
 
 再次访问请求正常，日志中`response_flags` 为空：
 
-![image-20200212113936026](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-060543.png)
+![image-20200212222913583](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142915.png)
 
 ---
 
@@ -311,7 +311,7 @@ Istio 官方在[文档](https://istio.io/docs/tasks/security/authentication/auth
 
 > Don’t forget that destination rules are also used for non-auth reasons such as setting up canarying, but the same order of precedence applies. So if a service requires a specific destination rule for any reason - for example, for a configuration load balancer - the rule must contain a similar TLS block with `ISTIO_MUTUAL` mode, as otherwise it will override the mesh- or namespace-wide TLS settings and disable TLS.
 
-社区也有在这块的实现进行反思和重新设计：
+社区也有对这块的实现进行反思和重新设计：
 
 ![image-20200212133704748](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-061458.png)
 
