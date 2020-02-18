@@ -2,7 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh, envoy]
 title: istio 数据面调试指南
-header-img: //zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-033446.png
+header-img: //zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-103013.jpg
 
 ---
 
