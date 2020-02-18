@@ -85,7 +85,7 @@ kubectl apply -f sleep-hello.yaml
 
 用一张图来说明：
 
-![image-20200212223945019](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-143947.png)
+![image-20200218100343328](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-020347.png)
 
 从日志中我们可以分析出：
 
