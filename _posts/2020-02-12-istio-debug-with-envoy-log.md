@@ -2,7 +2,7 @@
 layout: post
 tags : [container, kubernetes, istio, 微服务, mesh, envoy]
 title: istio 数据面调试指南
-header-img: assets/images/istio/boats_new.png
+header-img: //zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-033446.png
 
 ---
 
@@ -50,7 +50,7 @@ demo 环境为腾讯云 TKE，isito 版本 1.4.3，代码归档于：[github.com
 
 Istio 中默认不开启 envoy 中的访问日志，需要手动打开，将 istio 配置中 `accessLogFile` 设置为 `/dev/stdout`：
 
-```
+```yaml
 % kubectl -n istio-system edit cm istio
 ......
 # Set accessLogFile to empty string to disable access log.
@@ -62,7 +62,7 @@ accessLogEncoding: 'JSON' # 默认日志是单行格式， 可选设置为 JSON
 
 我们以 sleep pod 访问 hello 服务来举例说明：
 
-```
+```shell
 kubectl apply -f sleep-hello.yaml
 ```
 
@@ -72,7 +72,7 @@ kubectl apply -f sleep-hello.yaml
 
 从 sleep Pod 中去访问 helloworld 服务, 确认应用正常：
 
-```
+```shell
 % SLEEP_POD=$(kubectl get pod -l app=sleep -o jsonpath="{.items[0].metadata.name}")
 % HELLO_V1_POD=$(kubectl get pod -l app=helloworld -l version=v1 -o jsonpath="{.items[0].metadata.name}")
 % kubectl exec -it $SLEEP_POD -csleep -- sh
@@ -155,7 +155,7 @@ envoy 允许定制日志格式， 格式通过若干「Command Operators」组�
 
 比如我们希望所有请求 helloworld 都路由到 v1 版本，创建对应的 virtual service：
 
-```
+```shell
 % kubectl apply -f hello-v1-virtualservice.yaml
 ```
 
@@ -189,7 +189,7 @@ spec:
 
 通过简单的分析就可以找到原因， 我们在VirtualService 中使用的 Destination 没有定义，将其补上：
 
-```
+```shell
 % kubectl apply -f hello-v1-destinationrule.yaml
 ```
 
@@ -216,7 +216,7 @@ spec:
 
 我们在现有环境中开启 mtls: 在 istio-system namespace 中配置mtls 所需 meshpolicy 和 destinationrule，分别代表服务端和客户端开启 mtls （省略 了 istio-policy istio-telemetry 相关的调整）。
 
-```
+```shell
 % kubectl -n istio-system apply -f mtls-init.yaml
 meshpolicy.authentication.istio.io/default configured
 destinationrule.networking.istio.io/default created
@@ -259,14 +259,14 @@ Sleep envoy `"response_flags": "UC"` 表示 Upstream 端终止了连接， `"ups
 
 登录 helloworld pod，通过 admin api 将日志级别改为 debug：
 
-```
+```shell
 % kubectl exec -it $HELLO_V1_POD -chelloworld -- sh
 # curl -XPOST http://localhost:15000/logging\?level\=info
 ```
 
 以上操作会改动这个 envoy 的所有日志目标，还可以只修改指定目标的日志级别，以减少日志量，比如：
 
-```
+```shell
 curl -XPOST http://localhost:15000/logging\?filter\=debug
 curl -XPOST http://localhost:15000/logging\?conn_handler\=debug
 curl -XPOST http://localhost:15000/logging\?connection\=debug
@@ -283,11 +283,11 @@ curl -XPOST http://localhost:15000/logging\?router\=debug
 
 我们在 helloworld DestinationRule 中补充 mtls 配置：
 
-```
+```shell
 % kubectl apply -f hello-v1-destinationrule-with-mtls.yaml
 ```
 
-```
+```yaml
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
