@@ -15,9 +15,7 @@ Istio 作为 Service Mesh 领域的集大成者, 提供了流控, 安全, 遥测
 
 以下是istio 1.1 官方架构图:
 
-<img src="https://preliminary.istio.io/docs/concepts/what-is-istio/arch.svg" width="80%"/>
-
-
+![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093332.png)
 
 虽然Istio 支持多个平台, 但将其与 Kubernetes 结合使用，其优势会更大, Istio 对Kubernetes 平台支持也是最完善的, 本文将基于Istio + Kubernetes 进行展开.
 
@@ -41,9 +39,7 @@ prometheus-66b7689b97-w9glt                   1/1       Running
 
 将istio系统组件细化到进程级别, 大概是这个样子:
 
-<img src="https://ws3.sinaimg.cn/large/006tKfTcgy1g187gshs79j315m0u0qct.jpg" referrerpolicy="no-referrer"/>
-
-<a href="https://ws4.sinaimg.cn/large/006tKfTcgy1g187dn7s1tj315m0u0x6t.jpg" referrerpolicy="no-referrer" target="_blank">查看高清原图</a>
+![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093205.png)
 
 Service Mesh 的Sidecar 模式要求对数据面的用户Pod进行代理的注入, 注入的代理容器会去处理服务治理领域的各种「脏活累活」, 使得用户容器可以专心处理业务逻辑.
 
