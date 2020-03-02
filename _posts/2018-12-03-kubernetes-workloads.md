@@ -101,7 +101,7 @@ Spec重要属性:
 * hostIPC: true/false
 * hostPID: true/false
 * Lifecycle:
-  * postStart
+  * postStart (容器级别)
   * preStop
 
 Lifecycle 执行顺序:
@@ -111,6 +111,13 @@ Lifecycle 执行顺序:
 容器被杀死之前（比如，收到了 SIGKILL 信号） -> 执行preStop -> (串行) 容器被杀死
 
 如果 postStart 执行超时或者错误，Kubernetes 会在该 Pod 的 Events 中报出该容器启动失败的错误信息，导致 Pod 也处于失败的状态
+
+#### 端口:
+
+通过设置pod(daemonset) hostNetwork=true, 将pod中所有容器的端口号直接映射到物理机上， 设置hostNetwork=true的时候需要注意:
+
+* 如果不指定hostport，默认hostport 等于containerPort
+* 如果指定了hostPort, 则hostPort 必须等于containerPort的值
 
 ### 1.3 Projected Volume
 
@@ -208,11 +215,43 @@ Volumes:
   Optional:    false
 ```
 
-### 1.4 容器健康检查和恢复机制
+### 1.4 生命周期、健康检查和恢复机制
 
-#### 1.4.1 恢复机制
+#### 1.4.1 生命周期:
 
-pod.spec.restartPolicy: Pod 恢复机制, 默认Always
+##### 容器状态表：
+
+Container State:
+
+* Waiting: 容器默认状态，通常在执行 pulling images, applying Secrets
+* Running： executing without issues，开始执行`postStart`到`preStop`等后续流程
+* Terminated：completed its execution and has stopped running， A container enters into this when it has successfully completed execution or when it has failed for some reason
+
+Container Ready：通过readiness反馈， True、False
+
+##### Pod 中容器生命周期：
+
+![image-20191127144758905](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-11-27-064801.png)
+
+##### Pod 状态机：
+
+* Pending
+* Running
+* Succeeded
+* Failed
+* Unknown
+
+![image-20191127144418521](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-11-27-064421.png)
+
+
+
+Pod readiness gate： todo
+
+#### 1.4.2 恢复机制
+
+pod.spec.restartPolicy: （定义在Pod上， 但是影响的是各个容器）
+
+Pod 恢复机制, 默认Always
 
 * Always：在任何情况下，只要容器不在运行状态，就自动重启容器
 * OnFailure: 只在容器 异常时才自动重启容器
@@ -230,16 +269,21 @@ Kubernetes 中并没有 Docker 的 Stop 语义。所以虽然是 Restart（重�
 
 Pod 的恢复过程，永远都是发生在当前节点上，而不会跑到别的节点上去。事实上，一旦一个 Pod 与一个节点（Node）绑定，除非这个绑定发生了变化（pod.spec.node 字段被修改），否则它永远都不会离开这个节点。这也就意味着，如果这个宿主机宕机了，这个 Pod 也不会主动迁移到其他节点上去, 除非使用 Deployment 这样的“控制器”来管理 Pod
 
+#### 1.4.3 健康检查
 
-#### 1.4.2 livenessProbe:
+ ##### livenessProbe:
 
-周期性检查, 决定pod的生命周期
+定义在容器级别， 周期性检查, 决定pod的生命周期
 
 支持 HTTP/TCP/CMD
 
-#### 1.4.3 readinessProbe
+##### readinessProbe：
+
+定义在容器级别， 周期性检查？
 
 readinessProbe 检查结果的成功与否，决定的这个 Pod 是不是能被通过 Service 的方式访问到，而并不影响 Pod 的生命周期
+
+注意： 只有整个pod的所有readiness 都通过， pod才会被加入service endpoint
 
 ### 1.5 PodPreset
 
@@ -322,7 +366,6 @@ pass          Opaque                                1         51s
 从文件创建:
 
 `kubectl create configmap ui-config --from-file=example/ui.properties`
-
 
 ---
 
