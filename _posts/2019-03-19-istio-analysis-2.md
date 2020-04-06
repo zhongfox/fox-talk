@@ -10,7 +10,7 @@ header-img: assets/images/istio/istioistio.png
 
 今天我们分析下istio-sidecar-injector 组件:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093513.jpg)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093513.jpg)
 
 用户空间的Pod要想加入mesh, 首先需要注入sidecar 容器, istio 提供了2种方式实现注入:
 

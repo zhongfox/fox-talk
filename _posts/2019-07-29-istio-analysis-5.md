@@ -10,7 +10,7 @@ header-img: assets/images/istio/boats_new.png
 
 Istio 并不是单一领域的技术, 它综合了诸多服务治理领域的解决方案和最佳实践。在模型上, istio 提供了多个层次的抽象, 以适配不同的平台场景; 在实际应用上, istio 提供了若干可选的开源系统和技术, 并合理的将这些系统组合在一起, 以实现服务网格中的「连接」、「安全」、「控制」和「可观测性」。
 
-![image-20190729153848023](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135253.png)
+![image-20190729153848023](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135253.png)
 
 在 istio 的应用场景中, 异地多集群网格是其中最复杂的场景之一。istio 在 1.1 后提供了三种多集群的连通拓扑:
 
@@ -28,7 +28,7 @@ Istio 并不是单一领域的技术, 它综合了诸多服务治理领域的解
 
 
 
-![Shared Istio control plane topology spanning multiple Kubernetes clusters using gateways](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-01-30-diagram.svg)
+![Shared Istio control plane topology spanning multiple Kubernetes clusters using gateways](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-01-30-diagram.svg)
 
 
 
@@ -63,7 +63,7 @@ Istio 并不是单一领域的技术, 它综合了诸多服务治理领域的解
 
 在广州集群上, 安装好单集群 istio 组件:
 
-![image-20190729231121442](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-151144.png)
+![image-20190729231121442](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-151144.png)
 
 #### 2.1 主集群访问子集群 kube api
 
@@ -90,7 +90,7 @@ kubectl label --context=guangzhou secret singapore-secret istio/multiCluster=tru
 
 在 Pilot 源码中, 会创建 SecretController 来 list/watch lable `istio/multiCluster=true` 的 secret, 并实例化 remoteKubeController, 作为网格服务发现数据的来源之一。
 
-![image-20190729172916130](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135224.png)
+![image-20190729172916130](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135224.png)
 
 #### 2.2 将控制面组件暴露给子集群使用
 
@@ -163,7 +163,7 @@ mixerReportServer: istio-telemetry.istio-system.svc.cluster.local:15004
 - istio-pilot:15011
 ```
 
-![image-20190729173048701](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135216.png)
+![image-20190729173048701](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135216.png)
 
 #### 2.3 数据面创建 ingress gateway
 
@@ -195,7 +195,7 @@ spec:
 % kubectl apply -f install/primarycluster-cluster-aware-gateway.yaml
 ```
 
-![image-20190729173523592](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135209.png)
+![image-20190729173523592](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135209.png)
 
 ##### 关于 mTLS 和 AUTO_PASSTHROUGH
 
@@ -209,7 +209,7 @@ spec:
 
 我们看看以上的 Gateway `cluster-aware-gateway` 443 端口开启`AUTO_PASSTHROUGH` 后的 xDS 效果:
 
-![image-20190730103626893](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-30-023631.png)
+![image-20190730103626893](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-30-023631.png)
 
 其中 Listener Filter `envoy.listener.tls_inspector` 会检测传输是否是 TLS, 如果是的话, 会进一步提取 SNI (或者 ALPN), SNI 信息在后续 FilterChain 中可以用来路由。
 
@@ -286,7 +286,7 @@ tls_context:
   require_client_certificate: true
 ```
 
-![image-20190729173651673](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135204.png)
+![image-20190729173651673](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135204.png)
 
 
 #### 2.4 开启服务间 mTLS 认证
@@ -338,7 +338,7 @@ spec:
 % kubectl apply -f install/primarycluster-services-mtls.yaml
 ```
 
-![image-20190729173735897](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135158.png)
+![image-20190729173735897](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135158.png)
 
 ------
 
@@ -393,7 +393,7 @@ export CONTROL_PANEL_GW=$(kubectl --context guangzhou -n istio-system get servic
 
  子集群中并没有安装 istio 控制面组件, 也不存在任何 istio CRD, 以上操作在子集群中创建了若干 kubernetes 原生资源, 用以实现子集群和主集群的连通, 我们看看其中的一些重要配置:
 
-![image-20190729161910641](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135151.png)
+![image-20190729161910641](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135151.png)
 
 在新加坡集群中, 并没有 pilot、telemetry、policy 等组件 Pod, 但是存在相关的 Headless Service (ClusterIP 为 None), 并添加它们的 endpoints 指向广州主集群的控制面 ingress Gateway IP, 以此实现单控制面共享。
 
@@ -479,7 +479,7 @@ env:
 % kubectl --context singapore apply -f install/subcluster-apps.yaml
 ```
 
-![image-20190729175507376](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135141.png)
+![image-20190729175507376](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135141.png)
 
 创建 ingress gateway, 放通对 mall 服务的访问流量:
 
@@ -541,15 +541,15 @@ spec:
 
 注意虽然以上流控 CRD 是 apply 到主集群, 但是因为广州和新加坡共享一个控制面, 因此这些流控设置在 2 个集群都会生效:
 
-![image-20190729213030343](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135135.png)
+![image-20190729213030343](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135135.png)
 
 现在我们分别通过广州和新加坡地域的 ingress gateway IP 访问 mall 应用, 多访问几次, 可以发现, 无论从哪里地域进入, 随机的可以访问到 recommend v1 (无 banner)和 recommend v2 (有 banner), 证明 2 个地域的服务实例是透明共享的:
 
-![image-20190729145727003](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135126.png)
+![image-20190729145727003](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135126.png)
 
 还可以通过工具 istioctl 查看 xDS 数据, 比如我们查看广州集群 mall pod 获得的 xDS, 其中有 2 个 recommend 服务的 endpoints:
 
-![image-20190729150633160](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135120.png)
+![image-20190729150633160](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-29-135120.png)
 
 `172.25.0.26:7000`是广州集群的 recommend v1 pod, 而`119.28.109.157:443` (新加坡 ingress gateway)在这里对应的是新加坡集群 recommend v2 的服务实例. 这些服务实例对业务代码来说是透明的, 访问 recommend 服务可以随机路由到任一集群。
 

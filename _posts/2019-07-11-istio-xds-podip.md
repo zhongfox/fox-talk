@@ -11,7 +11,7 @@ header-img: assets/images/istio/shanghai_2.jpg
 
 pilot会下发XDS给数据面的pod,当前pod 接收到的inbound cluster配置中, 路由终点`socket_address`将是`127.0.0.1`, 示图如下:
 
-![](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-035449.jpg)
+![](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-035449.jpg)
 
 
 
@@ -46,7 +46,7 @@ LocalhostIPv6Address = "::1"
 
 在不考虑特殊防火墙规则的情况下, 我们可以推导这样的矩阵:
 
-![image-20190711110015870](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040032.png)
+![image-20190711110015870](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040032.png)
 
 右下角的红框正是istio的问题: 出于安全考虑或者其他历史原因, 业务中往往存在 listen 本机具体ip这种方式, 因为istio中envoy把流量终点发往`127.0.0.1`, 我们会发现这种服务是无法加入istio 的服务网格.
 
@@ -60,7 +60,7 @@ LocalhostIPv6Address = "::1"
 
 继续调试, 发现envoy 发出的pod ip 流量被iptables拦截回了envoy, 形成死循环:
 
-![image-20190710211703635](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040039.png)
+![image-20190710211703635](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040039.png)
 
 
 
@@ -146,7 +146,7 @@ fi
 
 原来, 规则2是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod ip, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
 
-![image-20190711194210456](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122132.png)
+![image-20190711194210456](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122132.png)
 
 上图中output流量的第4步和第5步间的iptables规则, 正是规则1:
 
@@ -164,7 +164,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 
 服务管控有很多能力, 我们这里只观察其中的遥测功能:
 
-![image-20190710223507262](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040056.png)
+![image-20190710223507262](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040056.png)
 
 可以看到, 全链路监控中, 增加了2条details 调用details服务price接口的span, 分别是client side和server side, 可以看出原生pilot版本中, 调用自身的ip场景, 两端流量管控是生效的.
 
@@ -174,7 +174,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 
 测试pilot下发终点`socket_address`为pod ip, 并且去掉iptables 规则1: 
 
-![image-20190711195219221](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122136.png)
+![image-20190711195219221](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122136.png)
 
 1. 将pilot 修改为改造后的版本
 
@@ -188,7 +188,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 3. 重建bookinfo 项目, 使用改造过的「调用自身的ip场景」的details服务.
 
 
-![image-20190710230302727](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040120.png)
+![image-20190710230302727](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040120.png)
 
 访问验证, 发现: details 调用details服务price接口的span, 只存在client端的一条, 而server 端的流量没有被拦截, 因此无法进行流量控制(这里是遥测).
 
@@ -201,7 +201,7 @@ ISTIO_REDIRECT  all  --  anywhere   !localhost
 1. 如果保留iptables 规则 1, 可以获得「调用自身的ip场景」的两端流量管控能力. 但是无法满足「服务监听pod ip接入mesh」的需求
 2. 如果改造pilot, 下发终点`socket_address`为pod ip, 同时去掉iptables 规则1, 可以实现「服务监听pod ip接入mesh」的需求, 但是对于「调用自身的ip场景」, 只会存在client端的流量管控能力
 
-![image-20190711202120481](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122140.png)
+![image-20190711202120481](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122140.png)
 
 如果业务强依赖「监听pod ip」, 而不愿意改造为「监听0.0.0.0」, 可以考虑实施方案2, 方案2中各种访问路由都是透明联通的, 损失的仅仅是在场景「pod调用自身service, 且service刚好负载均衡到当前pod」中的server side 流控, 在istio中, 大部分流控功能是在client side 实现的, 通常可以接受.
 

@@ -8,7 +8,7 @@ header-img: assets/images/istio/shanghai_2.jpg
 
 ### 1. 场景
 
-![image-20190731103825382](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-023827.png)
+![image-20190731103825382](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-023827.png)
 
 场景示例:
 
@@ -70,7 +70,7 @@ istio提供了多种流量识别的能力, 其中包括常见的基于流量内�
 
 
 
-![image-20190731103736410](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-023739.png)
+![image-20190731103736410](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-023739.png)
 
 目前istio 使用envoy作为sidecar流量代理, envoy通过filter chain 来实现流量的链式操纵, 该方案需要针对不同的私有协议, 开发一套envoy filter, 用于将私有协议透明转换为istio目前支持良好的协议, 如grpc.
 
@@ -86,7 +86,7 @@ istio提供了多种流量识别的能力, 其中包括常见的基于流量内�
 2. 流量以gRPC方式从 serviceA  sidecar 到 serviceB sidecar, 用户可以使用使用gRPC在istio体系的中治理能力.
 3. Service B 对应的sidecar, 其最后一个filter 是将gRPC协议转换为指定私有协议.
 
-![image-20190426084904072](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-024046.png)
+![image-20190426084904072](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-31-024046.png)
 
 方案主要优劣:
 

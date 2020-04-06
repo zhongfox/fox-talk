@@ -30,7 +30,7 @@ demo 环境为腾讯云 TKE，isito 版本 1.4.3，代码归档于：[github.com
 
 在以上流程中， Envoy 接受请求流量叫做 **Downstream**，Envoy 发出请求流量叫做**Upstream**。在处理Downstream 和 Upstream 过程中， 分别会涉及2个流量端点，即请求的发起端和接收端：
 
-![image-20200212134617057](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-054619.png)
+![image-20200212134617057](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-054619.png)
 
 在这个过程中， envoy 会根据用户规则，计算出符合条件的转发目的主机集合，这个集合叫做 **UPSTREAM_CLUSTER**,  并根据负载均衡规则，从这个集合中选择一个 host 作为流量转发的接收端点，这个 host 就是 **UPSTREAM_HOST**。
 
@@ -66,7 +66,7 @@ accessLogEncoding: 'JSON' # 默认日志是单行格式， 可选设置为 JSON
 kubectl apply -f sleep-hello.yaml
 ```
 
-![image-20200212222251433](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142255.png)
+![image-20200212222251433](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142255.png)
 
 该文件定义了 2个版本的 helloworld 和一个 sleep Pod，helloworld service 的端口是 4000， 而 pod 的端口是5000。
 
@@ -81,11 +81,11 @@ kubectl apply -f sleep-hello.yaml
 
 这时候我们可以去分析 2 个 pod 各自的envoy 日志：
 
-![image-20200212222055391](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142111.png)
+![image-20200212222055391](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142111.png)
 
 用一张图来说明：
 
-![image-20200218100343328](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-020347.png)
+![image-20200218100343328](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-18-020347.png)
 
 从日志中我们可以分析出：
 
@@ -123,7 +123,7 @@ kubectl apply -f sleep-hello.yaml
 
 envoy 允许定制日志格式， 格式通过若干「Command Operators」组合，用于提取请求信息，istio 没有使用 envoy 默认的日志格式， istio 定制的访问日志格式如下：
 
-![image-20200205002607125](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-04-162610.png)
+![image-20200205002607125](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-04-162610.png)
 
 完整的「Command Operators」含义可查阅 [Envoy Access logging Command Operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log#command-operators)
 
@@ -178,12 +178,12 @@ spec:
 
 从 sleep 中访问发现响应 503：
 
-![image-20200212222518280](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142520.png)
+![image-20200212222518280](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142520.png)
 
 
 如果没有上下文，我们很难判断 503 是来自业务容器还是 sidecar，查看 sleep 和 hello 的 envoy 日志，可以发现：hello pod 的envoy 没有接受到请求，sleep pod 的 envoy 里日志：
 
-![image-20200212222631659](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142634.png)
+![image-20200212222631659](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142634.png)
 
 其中`"response_flags": "NR"`  表示「No route configured」，也就是 envoy 找不到路由，我们可以判断出该异常是有 envoy 返回。
 
@@ -208,7 +208,7 @@ spec:
 
 再次访问请求正常，日志中`response_flags` 为空：
 
-![image-20200212222913583](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142915.png)
+![image-20200212222913583](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-142915.png)
 
 ---
 
@@ -247,7 +247,7 @@ spec:
 
 片刻后， sleep 再次访问 helloworld 出现`connection termination`异常，sleep envoy 中有如下日志：
 
-![image-20200212123932832](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-060832.png)
+![image-20200212123932832](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-060832.png)
 
 Sleep envoy `"response_flags": "UC"` 表示 Upstream 端终止了连接， `"upstream_host": "172.16.0.15:5000"`可以看出流量是发往了 helloworld v1 pod，进而查看 helloworld pod envoy 日志，发现居然没有日志！
 
@@ -275,7 +275,7 @@ curl -XPOST http://localhost:15000/logging\?router\=debug
 
 这时我们可以看到，流量的确到达了 helloworld，但是在 TLS 握手阶段发生了错误：
 
-![image-20200212131616274](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-061445.png)
+![image-20200212131616274](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-061445.png)
 
 进一步分析，我们可以发现是因为服务端（helloworld）开启了 mtls，但是客户端（sleep）却没有开启，为什么 istio-system 中的 default destination rule 没有起作用？
 
@@ -313,7 +313,7 @@ Istio 官方在[文档](https://istio.io/docs/tasks/security/authentication/auth
 
 社区也有对这块的实现进行反思和重新设计：
 
-![image-20200212133704748](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-061458.png)
+![image-20200212133704748](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-061458.png)
 
 未来版本中我们应该可以看到 mtls 定义的优化。
 

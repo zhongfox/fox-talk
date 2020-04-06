@@ -10,7 +10,7 @@ header-img: assets/images/istio/istioistio.png
 
 今天我们来解析istio控制面组件Galley. Galley Pod是一个单容器单进程组件, 没有sidecar, 结构独立, 职责明确.
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093624.jpg)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093624.jpg)
 
 前不久istio 1.1 版本正式发布, 其中istio的配置管理机制有较大的改进, 以下是[1.1 release note](https://istio.io/about/notes/1.1/) 中部分说明:
 
@@ -43,7 +43,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 早期的Galley 仅仅负责对「配置」进行运行时验证, istio 控制面各个组件各自去list/watch 各自关注的「配置」, 以下是istio早期的Configuration flow:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093724.jpg)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093724.jpg)
 
 越来越多且复杂的「配置」给istio 用户带来了诸多不便, 主要体现在:
 
@@ -62,7 +62,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 在[istio 庖丁解牛(二) sidecar injector](https://imfox.io/2019/03/19/istio-analysis-2/)中我分析了istio-sidecar-injector 如何利用 MutatingWebhook 来实现sidecar注入, Galley 使用了k8s提供的另一个Admission Webhooks: ValidatingWebhook, 来做配置的验证:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093751.jpg)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093751.jpg)
 
 istio 需要一个关于ValidatingWebhook的配置项, 用于告诉k8s api server, 哪些CRD应该发往哪个服务的哪个接口去做验证, 该配置名为istio-galley, 简化的内容如下:
 
@@ -133,7 +133,7 @@ MCP 提供了gRPC 的实现, 实现代码参见: <https://github.com/istio/api/t
 
 两种模式的示意图如下:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093829.jpg)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093829.jpg)
 
 ------
 
@@ -180,7 +180,7 @@ go server.RunServer(serverArgs, livenessProbeController, readinessProbeControlle
 
 下面是Galley 配置服务结构示意图:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093933.png)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093933.png)
 
 从上图可以看到, Galley 配置服务主要包括 Processor 和 负责mcp通信的grpc Server.
 
@@ -483,7 +483,7 @@ func (con *connection) queueResponse(resp *WatchResponse) {
 
 最后上一张Galley mcp 服务相关模型UML:
 
-![img](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-094026.png)
+![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-094026.png)
 
 Galley 源代码展示了面向抽象(interface)编程的好处, Source 是对「配置」数据源的抽象, Distributor 是「配置」快照存储的抽象, Watcher 是对「配置」订阅端的抽象. 抽象的具体实现可以组合起来使用. 另外Galley组件之间也充分解耦, 组件之间的数据通过chan/watcher等流转.
 

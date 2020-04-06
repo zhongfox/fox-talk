@@ -22,7 +22,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.1 用户需求
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122411.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122411.jpg" />
 
 
 第一个场景应用:多分支环境.
@@ -33,7 +33,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.2 全量环境复制
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122440.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122440.jpg" />
 
 容器和kubernetes技术的流行, 极大的降低了测试、开发以及生产环境的一体化的门槛, 利用容器技术, 我们可以快速的复制并编排出一套新的运行环境,  这种全量复制方式对于小型的系统比较合适, 但是对于规模庞大, 结构复杂的大型系统, 这种方式会遇到很多挑战:
 
@@ -45,7 +45,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.3 分支增量复制+流量控制
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121545.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121545.jpg" />
 
 理想的情况是, 我们只维护一个主干环境, 通过增量且按需的方式复制, 获得分支环境. 新的分支环境既可以部署已有服务的新版本, 也可以对新服务进行部署, 通过流量控制策略灵活定义各环境中服务流量.
 
@@ -59,7 +59,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.4 在线商城系统
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122509.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122509.jpg" />
 
 所以让我们看看, 系统引入服务网格后, 可以如何优化这个场景.
 
@@ -73,7 +73,7 @@ demo 涉及代码: <https://github.com/TencentCloudContainerTeam/tcm-demo>
 
 #### 1.5 多分支环境场景
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122602.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122602.jpg" />
 
 - jason希望验证推荐系统recommend 新版本v2, 这个版本在「推荐商品」区域上增加了一个banner.
 - 与此同时, fox正打算验证另一个的feature: 包括对discount 和 products的修改, 同时引入了新的收藏服务favorites. 其中discount v2在「折扣商品」区域上新增一个banner, 同时products服务会通过调用新的服务favorites获取商品的收藏人数, 然后返回给前端页面.
@@ -94,7 +94,7 @@ kubectl create namespace base
 
 #### 2.2 开启 base 命名空间中的sidecar自动注入功能
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121613.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121613.jpg" />
 
 #### 2.3 安装base环境的服务
 
@@ -106,7 +106,7 @@ kubectl -nbase apply -f install/base_apps.yaml
 
 稍等片刻查看各应用运行正常:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122637.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122637.jpg" />
 
 这时候网格里的服务还无法被外网访问到, 我们还需要对网格边缘流量进行配置.
 
@@ -116,7 +116,7 @@ Istio 使用 Gateway 定义网格边缘的流量行为, 对比原生的k8s ingre
 
 istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套的service, 包含proxy的pod, 以及绑定云平台LB, TKE Mesh Gateway对这些组件进行和整合, 用户只需要配置Gateway的基本流控规则, TKE Mesh会自动实现相关的service, proxy pod 以及腾讯云LB的配置.
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121633.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121633.jpg" />
 
 
 
@@ -124,7 +124,7 @@ istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套�
 
 如果服务只有一个版本, 这里可以省略, 不过为了后面演示需要, 我们还是对mall应用创建一个版本v1:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121647.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121647.jpg" />
 
 
 
@@ -132,7 +132,7 @@ istio gateway 仅是一个描述边缘流控的CRD, 它要工作还需要配套�
 
 gateway定义了入口流量的4层属性, 我们还需要一个virtualservice来定义七层路由, 将后端应用层服务挂到gateway上:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121659.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121659.jpg" />
 
 现在可以访问mall首页验证应用正常运行, 大家都是访问base 基准环境.
 
@@ -154,7 +154,7 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
    kubectl apply -f install/jason-apps.yaml
    ```
 
-   <img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121711.jpg" />
+   <img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121711.jpg" />
 
 #### 3.2 通过TKE Mesh控制台发布新的路由策略:
 
@@ -165,15 +165,15 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
 
 服务网格提供了大量的基于流量内容匹配的规则: 这里我们选择使用header, 因为我们的登录信息在cookie里
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121725.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121725.jpg" />
 
 #### 3.3 进行jason登录验证
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121740.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121740.jpg" />
 
 注意一点, recommend服务还依赖scores服务,  我们对jason分支环境, 只定义了recommend服务的inbound流量规则, 对于从recommend v2 服务流出的outbound流量, 仍然会访问base 环境中现存的scores服务, 这也符合我们的预期:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121753.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121753.jpg" />
 
 ------
 
@@ -196,7 +196,7 @@ recommend 新版本v2 将在「推荐商品」区域增加一个的banner.
 kubectl apply -f install/fox-apps.yaml
 ```
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121807.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121807.jpg" />
 
 #### 4.2 通过TKE Mesh控制台发布fox路由策略
 
@@ -204,7 +204,7 @@ kubectl apply -f install/fox-apps.yaml
 
 2. 对于products服务的访问流量(inbound), 判断访问流量的来源, 如果属于`fox`环境, 则路由到fox下products, 其他流量仍路由到base环境
 
-   <img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121818.jpg" />
+   <img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121818.jpg" />
 
 3. 新服务favorites只存在于namespace `fox`中,同样我们通过来源判断, 限制其访问流量(inbound), 只能来自`fox`环境. (图略)
 
@@ -212,11 +212,11 @@ kubectl apply -f install/fox-apps.yaml
 
 #### 4.3 应用成功后, 进行fox登录访问验证:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121838.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121838.jpg" />
 
 #### 4.4 查看服务拓扑变化
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121858.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121858.jpg" />
 
 
 
@@ -236,7 +236,7 @@ kubectl apply -f install/fox-apps.yaml
 - RPC串行并行逻辑优化
 - 请求合并优化
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121913.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121913.jpg" />
 
 
 
@@ -262,13 +262,13 @@ kubectl apply -f install/fox-apps.yaml
 kubectl apply -f install/mall-v2-apps.yaml
 ```
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121940.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121940.jpg" />
 
 
 
 #### 6.2 新建mall v2 版本:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121952.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-121952.jpg" />
 
 创建以后仍然不会有访问流量, 因为之前的配置mall应用只会访问v1.
 
@@ -276,23 +276,23 @@ kubectl apply -f install/mall-v2-apps.yaml
 
 修改mall 路由策略, 按照权重50-50 路由到v1和v2版本:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122005.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122005.jpg" />
 
 #### 6.4 验证
 
 访问页面, 版本v1 和v2 随机切换, 验证新版本无异常, 可以查看基准环境拓扑变化:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122746.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122746.jpg" />
 
 查看v2版本的全链路跟踪, 确认请求性能得到优化:  mall 服务调用users, recommend, discount服务方式, 从串行改为了并行, 理论耗时从三次访问耗时之和降低为三次访问耗时的最大值.
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122319.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122319.jpg" />
 
 #### 6.4 完成发布
 
 将流量全部切为 mall v2:
 
-<img src="https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122201.jpg" />
+<img src="//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-08-20-122201.jpg" />
 
 验证系统运行符合预期.
 
