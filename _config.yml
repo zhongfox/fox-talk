@@ -23,7 +23,7 @@ twitter_username:  zhongfox2
 highlighter: rouge
 permalink: pretty
 paginate: 100
-exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+exclude: ["backup", "less","node_modules","Gruntfile.js","package.json","README.md"]
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 
 
