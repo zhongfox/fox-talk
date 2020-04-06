@@ -2,6 +2,7 @@
 layout: post
 tags : [分布式, web架构, nosql, elasticsearch, redis, 集群, kafka, couchbase]
 title: 分布式系统浅析
+header-img: img/pic/2016/09/yunhai.jpg
 
 ---
 

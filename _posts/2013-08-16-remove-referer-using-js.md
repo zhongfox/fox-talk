@@ -6,6 +6,7 @@ title: 使用javascript去掉referer
 ---
 
 ### HTTP Referer 
+
 HTTP Referer是header的一部分，当浏览器向web服务器发送请求的时候，一般会带上Referer，告诉服务器我是从哪个页面链接过来的，服务器籍此可以获得一些信息用于处理。比如从我主页上链接到一个朋友那里，他的服务器就能够从HTTP Referer中统计出每天有多少用户点击我主页上的链接访问他的网站。
 
 Referer其实应该是英文单词Referrer，不过拼错的人太多了，所以编写标准的人也就将错就错了,所以现在我们看到的http header是**Referer**
@@ -22,7 +23,7 @@ Html5定义了一种新的链接文档关系`noreferrer`, 规定当超链接使�
 
 ----
 
-###使用javascript去掉referer
+### 使用javascript去掉referer
 
 毛爷爷说，一切顽固的浏览器都是纸老虎，伟大的程序员们提供了诸多的兼容去除/替换referer的办法。
 

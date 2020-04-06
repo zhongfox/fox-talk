@@ -21,7 +21,7 @@ subtitle:   "手持两把锟斤拷, 口中疾呼烫烫烫: 乱码是怎么来的
 
 ## 主要编码介绍
 
-###一. ASCII
+### 一. ASCII
   （American Standard Code for Information Interchange）美国信息交换标准代码
   
   ASCII码使用指定的7位或8位二进制数组合来表示128或256种可能的字符, ASCII文件是简单的无格式文本文件，可以由任何计算机所识别
@@ -31,7 +31,7 @@ subtitle:   "手持两把锟斤拷, 口中疾呼烫烫烫: 乱码是怎么来的
   8位ascii码的编码128-255中扩展的是一些制表符，是ISO/IEC 8859-1 (ISO-8859-1) 又叫latin-1，在网页编码等各种网络协议中使用
   
   
-###二. GB2312
+### 二. GB2312
 
   信息交换用汉字编码字符集, euc-cn, cp936
   
@@ -50,7 +50,7 @@ subtitle:   "手持两把锟斤拷, 口中疾呼烫烫烫: 乱码是怎么来的
   由于一级汉字从16区起始，汉字区的"高位字节"的范围是0xB0-0xF7，"低位字节"的范围是0xA1-0xFE，占用的码位是 72\*94=6768。其中有5个空位是D7FA-D7FE。
   例如"啊"字会以两个字节，0xB0（第一个字节） 0xA1（第二个字节）储存。区位码=区字节+位字节（与区位码对比：0xB0=0xA0+16,0xA1=0xA0+1）。
   
-###三. GBK
+### 三. GBK
 
 汉字内码扩展规范，向下与 GB2312 编码兼容
 
@@ -59,7 +59,7 @@ subtitle:   "手持两把锟斤拷, 口中疾呼烫烫烫: 乱码是怎么来的
 
 GB系列编码字节序列都是采用大端法
   
-###四. Unicode （Universal Multiple-Octet Coded Character Set）
+### 四. Unicode （Universal Multiple-Octet Coded Character Set）
   
   Unicode 是基于通用字符集（Universal Character Set）的标准来发展，Unicode只是一个符号集, 它只规定了符号的二进制代码, 却没有规定这个二进制代码应该如何存储, 所以Unicode只是编码，不存在多少字节的问题。
   
@@ -100,7 +100,7 @@ GB系列编码字节序列都是采用大端法
 * UTF-32 Big Endian 00 00 FE FF 
 * UTF-32 Little Endian FF FE 00 00
   
-###五. ANSI
+### 五. ANSI
   
   （American National Standards Institute）美国国家标准学会的标准码
   
@@ -196,7 +196,7 @@ GB系列编码字节序列都是采用大端法
   具体编码规则：除了ASCII字母、数字、标点符号和一些特殊字符以外，对其他所有字符进行编码。在\u0000到\u00ff之间的符号被转成%xx的形式，其余符号被转成%uxxxx的形式  
   相关javascript函数： escape(), encodeURI(), encodeURIComponent()  
 
-###　三．vim 中的编码
+### 三．vim 中的编码
 
 Vim 有四个跟字符编码方式有关的选项：
 
@@ -260,7 +260,7 @@ Vim 的多字符编码方式支持是如何工作的：
 
 * 在ruby1.9中，字符串是**字符序列**，字符串的单元是**字符**，每个字符串有**编码方式**，它指定了字符串的字节和字节所代表的字符串之间对应的关系。
 
-####ruby1.9中编码的一些新特性
+#### ruby1.9中编码的一些新特性
 
 1.9最重要的变化之一是支持多字节编码。
 

@@ -431,7 +431,7 @@ title: Rspec 代码规范和最佳实践
 
 ----
 
-###参考资料：
+### 参考资料：
 
 <https://www.relishapp.com/rspec/>
 
