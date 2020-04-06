@@ -1,7 +1,7 @@
 ---
 layout: post
 tags : [go, beego]
-title: BEEGO 学习
+title: BEEGO 笔记
 
 ---
 

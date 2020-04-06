@@ -416,13 +416,6 @@ title: Linux 笔记
 
   `ctrl + 光标` 按照word移动，xsehll里无效
 
-* 安装`oh my zshell`
-
-  * `echo $SHELL` 查看当前使用的是什么shell
-  * `which zsh` 如果没有zsh, 需要先安装zsh `sudo apt-get install zsh`
-  * `curl -L http://install.ohmyz.sh | sh`
-  * `chsh -s \`which zsh\``
-
 * kill
 
       kill -l
@@ -513,3 +506,11 @@ pstree:
 * -u 同时列出进程所属账号 -p 同时列出pid
 * -g, --show-pgids    show process group ids; implies -c
 * -p, --show-pids     show PIDs; implies -c
+
+---
+
+关于 IFS 以及 ANSI-C Quoting
+
+[What is the exact meaning of IFS=$'\n'?](https://stackoverflow.com/questions/4128235/what-is-the-exact-meaning-of-ifs-n)
+
+[ANSI-C Quoting](http://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)

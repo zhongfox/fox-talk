@@ -80,20 +80,59 @@ $ docker exec -it --privileged a81fa3ab95c2 sh
 $ sudo iptables -t nat -L
 ```
 
-![image-20190710194910115](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-040047.png)
+```
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination
+ISTIO_INBOUND  tcp  --  anywhere             anywhere
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+ISTIO_OUTPUT  tcp  --  anywhere             anywhere
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination
+
+Chain ISTIO_INBOUND (1 references)
+target     prot opt source               destination
+RETURN     tcp  --  anywhere             anywhere             tcp dpt:22
+RETURN     tcp  --  anywhere             anywhere             tcp dpt:15020
+ISTIO_IN_REDIRECT  tcp  --  anywhere             anywhere
+
+Chain ISTIO_IN_REDIRECT (2 references)
+target     prot opt source               destination
+REDIRECT   tcp  --  anywhere             anywhere             redir ports 15006
+
+   Chain ISTIO_OUTPUT (1 references)
+   target     prot opt source               destination
+#1 RETURN     all  --  127.0.0.6            anywhere
+#2 ISTIO_IN_REDIRECT  all  --  anywhere    !localhost
+#3 RETURN     all  --  anywhere             anywhere             owner UID match istio-proxy
+#4 RETURN     all  --  anywhere             anywhere             owner GID match istio-proxy
+#5 RETURN     all  --  anywhere             localhost
+#6 ISTIO_REDIRECT  all  --  anywhere             anywhere
+
+Chain ISTIO_REDIRECT (1 references)
+target     prot opt source               destination
+REDIRECT   tcp  --  anywhere             anywhere             redir ports 15001
+```
 
 
 重点关注链`ISTIO_OUTPUT`中的5条规则:
 
-规则1表示: 如果destination不是127.0.0.1/32,  转给15001(envoy监听)
+规则1表示: 不拦截回环地址上source是127.0.0.6的流量，这是virtualInbound 转发给 `ORIGINAL_DST` 的流量 (127.0.0.6:0 是 envoy 中 cluster InboundPassthroughClusterIpv4 的配置的 `source_address`)
 
-规则2和3表示: 如果是envoy本身(UID/GID 是istio-proxy)发出的流量, 不做处理.
+规则2表示: 如果destination不是127.0.0.1/32,  转给15006(virtualInbound, envoy监听)
 
-规则4表示: pod内容器间如果显式使用127.0.0.1/32相互调用, 不做处理.
+规则3和4表示: 如果是envoy本身(UID/GID 是istio-proxy)发出的流量, 不做处理.
 
-规则5表示: 剩下的流量全转给15001(envoy监听)
+规则5表示: pod内容器间如果显式使用127.0.0.1/32相互调用, 不做处理.
 
-规则2, 3, 4, 5 都好理解, 但是为什么会有规则1? 上面调试不通的原因正式因为规则1拦截掉了envoy 发给 本机 pod ip的流量.
+规则6表示: 剩下的流量全转给15001(virtualOutbound, envoy监听)
+
+规则1, 3, 4, 5, 6 都好理解, 但是为什么会有规则2? 上面调试不通的原因正式因为规则1拦截掉了envoy 发给 本机 pod ip的流量.
 
 查看源码中的代码和注释:
 
@@ -105,7 +144,7 @@ if [ -z "${DISABLE_REDIRECTION_ON_LOCAL_LOOPBACK-}" ]; then
 fi
 ```
 
-原来, 规则1是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod ip, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
+原来, 规则2是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod ip, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
 
 ![image-20190711194210456](http://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122132.png)
 

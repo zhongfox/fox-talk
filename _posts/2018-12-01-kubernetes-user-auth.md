@@ -95,6 +95,12 @@ root@sa-token-test:/# ls /var/run/secrets/kubernetes.io/serviceaccount
 ca.crt namespace  token
 ```
 
+* ca.crt，根证书。用于Client端验证API Server发送的证书
+
+* token是使用API Server私钥签名的JWT。用于访问API Server时，Server端认证
+
+* namespace, 标识这个service-account-token的作用域名空间
+
 如果一个 Pod 没有声明 serviceAccountName，Kubernetes 会自动在它的 Namespace 下创建一个名叫 default 的默认 ServiceAccount，然后分配给这个 Pod:
 
 ```
@@ -265,3 +271,106 @@ DBMmLEwHROlO4Ront5lw7GcaKMkEqtud,kubelet,kubelet,system:masters
 ### 3.4 OpenID Connect Tokens 认证
 
 TODO
+
+---
+
+## istio 安全
+
+TODO
+
+数据面:
+
+main container:
+
+```
+/var/run/secrets/kubernetes.io/serviceaccount/
+ca.crt  namespace  token
+```
+
+istio-proxy:
+
+```
+/var/run/secrets/kubernetes.io/serviceaccount/
+ca.crt  namespace  token
+
+/etc/certs/
+cert-chain.pem  key.pem  root-cert.pem
+
+/etc/istio/proxy
+envoy-rev0.json
+
+```
+
+控制面:
+
+pilot main:
+
+```
+/var/run/secrets/kubernetes.io/serviceaccount/
+ca.crt  namespace  token
+
+/etc/certs/
+cert-chain.pem  key.pem  root-cert.pem
+
+cert-chain.pem 包括
+  Subject Alternative Name:
+  URI:spiffe://cluster.local/ns/default/sa/default
+  格式: spiffe://<domain>/ns/<namespace>/sa/<serviceaccount>
+
+/etc/istio/config
+mesh meshNetworks
+```
+
+pilot istio-proxy:
+
+```
+/var/run/secrets/kubernetes.io/serviceaccount/
+ca.crt  namespace  token
+
+/etc/certs/
+cert-chain.pem  key.pem  root-cert.pem
+```
+
+---
+
+istio 证书
+
+```
+  secretVolumes:
+  - name: ingressgateway-certs
+    secretName: istio-ingressgateway-certs
+    mountPath: /etc/istio/ingressgateway-certs
+  - name: ingressgateway-ca-certs
+    secretName: istio-ingressgateway-ca-certs
+    mountPath: /etc/istio/ingressgateway-ca-certs
+```
+
+istio helm 创建的gateway的pod 默认会读上面的secret作为证书, 开始是空的
+
+然后serviec 需要声明使用证书:
+
+```
+$ kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+    hosts:
+    - "httpbin.example.com"
+EOF
+```
+
+
+

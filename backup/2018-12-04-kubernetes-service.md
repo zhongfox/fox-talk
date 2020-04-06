@@ -426,3 +426,216 @@ Ingress, egress 也可以定义且关系:
 `http://localhost:8001/api/v1/namespaces/default/services/foxdemo-develop:80/proxy/`
 
 
+
+---
+
+TODO:
+
+istio gateway 的 port和Service :
+
+ istio-ingressgateway pod 没有init container, 不做iptables拦截, istio gateway 的 port和Service 会被配置为入口listener, 然后根据virtualservice, 把vs的配置作为virtualhost和router 放到这些listener中
+
+
+pod ContainerPort 只影响其中的HostPort, 对service 的路由没啥影响
+
+https://kubernetes.io/zh/docs/concepts/services-networking/service/#%E6%B2%A1%E6%9C%89-selector-%E7%9A%84-service
+
+istio service entry:
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: httpbin-ext
+spec:
+  hosts:
+  - httpbin.org
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: DNS
+  location: MESH_EXTERNAL
+```
+
+只是增加了crd里的cluster:
+
+```
+{
+version_info: "2019-05-16T13:11:25Z/16",
+cluster: {
+name: "outbound|80||httpbin.org",
+type: "STRICT_DNS",
+connect_timeout: "10s",
+circuit_breakers: {
+thresholds: [
+{
+max_retries: 1024
+}
+]
+},
+dns_refresh_rate: "5s",
+dns_lookup_family: "V4_ONLY",
+load_assignment: {
+cluster_name: "outbound|80||httpbin.org",
+endpoints: [
+{
+lb_endpoints: [
+{
+endpoint: {
+address: {
+socket_address: {
+address: "httpbin.org",
+port_value: 80
+}
+}
+},
+load_balancing_weight: 1
+}
+],
+load_balancing_weight: 1
+}
+]
+}
+},
+last_updated: "2019-05-16T13:11:25.534Z"
+},
+```
+
+VirtualService 会增加内如到名为80的route里:
+
+```
+ apiVersion: networking.istio.io/v1alpha3
+ kind: VirtualService
+ metadata:
+   name: httpbin-ext
+ spec:
+   hosts:
+     - httpbin.org
+   http:
+   - timeout: 126s
+     route:
+       - destination:
+           host: httpbin.org
+         weight: 92
+       - destination:
+           host: httpbin.com
+         weight: 8
+
+```
+
+```
+route_config: {
+name: "80",
+virtual_hosts: [
+{
+name: "httpbin.org:80",
+domains: [
+"httpbin.org",
+"httpbin.org:80"
+],
+routes: [
+{
+match: {
+prefix: "/"
+},
+route: {
+weighted_clusters: {
+clusters: [
+{
+name: "outbound|80||httpbin.org",
+weight: 92,
+per_filter_config: {
+mixer: {
+forward_attributes: {
+attributes: {
+destination.service.host: {
+string_value: "httpbin.org"
+},
+destination.service.name: {
+string_value: "httpbin.org"
+},
+destination.service.namespace: {
+string_value: "default"
+}
+}
+},
+mixer_attributes: {
+attributes: {
+destination.service.host: {
+string_value: "httpbin.org"
+},
+destination.service.name: {
+string_value: "httpbin.org"
+},
+destination.service.namespace: {
+string_value: "default"
+}
+}
+},
+disable_check_calls: true
+}
+}
+},
+{
+name: "outbound|80||httpbin.com",
+weight: 8,
+per_filter_config: {
+mixer: {
+forward_attributes: {
+attributes: {
+destination.service.host: {
+string_value: "httpbin.com"
+}
+}
+},
+mixer_attributes: {
+attributes: {
+destination.service.host: {
+string_value: "httpbin.com"
+}
+}
+},
+disable_check_calls: true
+}
+}
+}
+]
+},
+timeout: "126s",
+retry_policy: {
+retry_on: "connect-failure,refused-stream,unavailable,cancelled,resource-exhausted,retriable-status-codes",
+num_retries: 2,
+retry_host_predicate: [
+{
+name: "envoy.retry_host_predicates.previous_hosts"
+}
+],
+host_selection_retry_max_attempts: "3",
+retriable_status_codes: [
+503
+]
+},
+max_grpc_timeout: "126s"
+},
+metadata: {
+filter_metadata: {
+istio: {
+config: "/apis/networking/v1alpha3/namespaces/default/virtual-service/httpbin-ext"
+}
+}
+},
+decorator: {
+operation: "httpbin-ext:80/*"
+},
+per_filter_config: {
+mixer: {
+disable_check_calls: true
+}
+}
+}
+]
+},
+```
+
+但并不会增加listener
