@@ -24,8 +24,6 @@ title: Redis 延迟分析
 
 延迟监控功能占用内存很小, 不过对于性能良好的redis也没有必要开启
 
-TODO
-
 * LATENCY LATEST
 * LATENCY HISTORY event-name
 * LATENCY RESET [event-name ... event-name]
@@ -116,8 +114,6 @@ Additionally, you can use your favorite per-process monitoring program (top, hto
 
 生成RDB或者AOF会使redis 主线程fork后台线程, 这会造成一定延迟
 
-TODO
-
 ### 过期操作引起的延迟
 
 redis 数据过期有以下两种方式:
@@ -135,10 +131,4 @@ redis 数据过期有以下两种方式:
 这种算法是必要的, 用于避免大量过期数据占用内存, 通常来说也是无害的, 因为很少会有大量数据在同一时刻过期, 除非大量使用`EXPIREAT 同一时间`
 
 实例参看: [善待Redis里的数据](http://neway6655.github.io/redis/2015/12/19/%E5%96%84%E5%BE%85Redis%E9%87%8C%E7%9A%84%E6%95%B0%E6%8D%AE.html)
-
----
-
-## Redis software watchdog
-
-TODO (2.6)
 
