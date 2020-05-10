@@ -60,7 +60,7 @@ k8s 内置了几十个Resources, istio 创造了50多个CRD, 其复杂度可见�
 
 ## Galley 配置验证功能
 
-在[istio 庖丁解牛(二) sidecar injector](https://imfox.io/2019/03/19/istio-analysis-2/)中我分析了istio-sidecar-injector 如何利用 MutatingWebhook 来实现sidecar注入, Galley 使用了k8s提供的另一个Admission Webhooks: ValidatingWebhook, 来做配置的验证:
+在[istio 庖丁解牛(二) sidecar injector](https://zhonghua.io/2019/03/19/istio-analysis-2/)中我分析了istio-sidecar-injector 如何利用 MutatingWebhook 来实现sidecar注入, Galley 使用了k8s提供的另一个Admission Webhooks: ValidatingWebhook, 来做配置的验证:
 
 ![img](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-23-093751.jpg)
 
