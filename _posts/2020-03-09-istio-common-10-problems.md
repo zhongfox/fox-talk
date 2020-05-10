@@ -31,7 +31,7 @@ k8s 的网络对应用层是无感知的，k8s 的主要流量转发逻辑发生
 
 istio 的核心能力是对 7层流量进行管控，但前提条件是 istio 必须知道每个受管控的服务是什么协议，istio 会根据端口协议的不同，下发不同的流控功能（envoy filter），而 k8s 资源定义里并不包括七层协议信息，所以 istio 需要用户显式提供。
 
-![image-20200303145429303](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-115608.png)
+![image-20200509203554310](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-123556.png-medium)
 
 ### istio 的解决方案：Protocol sniffing
 
@@ -39,7 +39,7 @@ istio 的核心能力是对 7层流量进行管控，但前提条件是 istio �
 * 检测 TLS `CLIENT_HELLO` 提取 SNI、ALPN、NPN 等信息
 
 * 基于常见协议的已知典型结构，尝试检测应用层 plaintext 内容
-  a. 基于[HTTP2 spec: Connection Preface](https://http2.github.io/http2-spec/#ConnectionHeader)，,判断是否为 HTTP/2
+  a. 基于[HTTP2 spec: Connection Preface](https://http2.github.io/http2-spec/#ConnectionHeader)，判断是否为 HTTP/2
   b. 基于 HTTP  header 结构，判断是否是 HTTP/1.x
 
 * 过程中会设置超时控制和检测包大小限制， 默认按照协议 TCP 处理
@@ -54,9 +54,9 @@ Protocol sniffing 减少了新手使用 istio 所需的配置，但是可能会�
 
 * 某些自定义私有协议，数据流的起始格式和 http 报文格式类似，但是后续数据流是自定义格式：
 
-  未开启嗅探时：数据流按照 L4 TCP 进行路由，符合用户期望
+  未开启嗅探时：数据流按照 L4 TCP 进行路由，符合用户期望。
 
-  如果开启嗅探：数据流最开始会被认定为 L7 http 协议，但是后续数据不符合 http 格式，流量将被中断
+  如果开启嗅探：数据流最开始会被认定为 L7 http 协议，但是后续数据不符合 http 格式，流量将被中断。
 
 建议生产环境不使用协议嗅探, 接入 mesh 的 service 应该按照约定使用协议前缀进行命名。
 
@@ -72,7 +72,7 @@ Protocol sniffing 减少了新手使用 istio 所需的配置，但是可能会�
 
 当用户使用 `kubectl apply -f multiple-virtualservice-destinationrule.yaml` 时，这些对象的传播和生效先后顺序是不保证的，所谓最终一致性，比如 VirtualService 中引用了某一个 DestinationRule 定义的子版本，但是这个 DestinationRule 资源的传播和生效可能在时间上落后于 该 VirtualService 资源。
 
-![image-20200304202141907](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-122143.png)
+![image-20200509204304669](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-124308.png-medium)
 
 ### 最佳实践：make before break
 
@@ -94,7 +94,7 @@ Protocol sniffing 减少了新手使用 istio 所需的配置，但是可能会�
 
 Envoy 接受请求流量叫做 **Downstream**，Envoy 发出请求流量叫做**Upstream**。在处理Downstream 和 Upstream 过程中， 分别会涉及2个流量端点，即请求的发起端和接收端：
 
-![image-20200212134617057](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-02-12-054619.png)
+![image-20200509204433393](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-124436.png-medium)
 
 在这个过程中， envoy 会根据用户规则，计算出符合条件的转发目的主机集合，这个集合叫做 **UPSTREAM_CLUSTER**,  并根据负载均衡规则，从这个集合中选择一个 host 作为流量转发的接收端点，这个 host 就是 **UPSTREAM_HOST**。
 
@@ -144,7 +144,7 @@ sidecar（envoy） 和用户容器的启动顺序是不确定的，如果用户�
 
 在 Pod 终止阶段，也会有类似的异常，根源仍然是 sidecar 和普通容器的生命周期的不确定性。
 
-![image-20200302220037612](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121555.png)
+![image-20200509204609571](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-124611.png-small)
 
 ### 解决方案
 
@@ -163,7 +163,7 @@ sidecar（envoy） 和用户容器的启动顺序是不确定的，如果用户�
 
 Ingress Gateway 规则不生效的一个常见原因是：Gateway 的监听端口在对应的 k8s Service 上没有开启，首先我们需要理解 Istio Ingress Gateway  和  k8s Service 的关系：
 
-![image-20200303172006759](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121004.png)
+![image-20200509204709262](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-124711.png-medium)
 
 上图中，虽然 gateway 定义期望管控端口 b 和 c，但是它对应的 service （通过腾讯云CLB）只开启了端口 a 和 b，因此最终从 LB 端口 b 进来的流量才能被 istio gateway 管控。
 
@@ -187,7 +187,7 @@ VirtualService 的属性`gateways`用于指定 VirtualService 的生效范围：
 
 一个常见的问题是以上的第三种情况，VirtualService 最开始作用于网关内部，后续要将其规则扩展到边缘网关上，用户往往只会添加具体 gateway name，而遗漏 `mesh`:
 
-![image-20200302145945848](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121100.png)
+![image-20200509205004810](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-125006.png-medium)
 
 Istio 自动给`VirtualService.gateways`设置默认值， 本意是为了简化用户的配置，但是往往会导致用户应用不当，一个 feature 一不小心会被用成了 bug。
 
@@ -235,13 +235,13 @@ service mesh 遥测系统中，对调用链跟踪的实现，并非完全的零�
 
 有部分用户难以理解：既然 inbound 流量和 outbound 流量已经完全被拦截到 envoy，envoy 可以实现完全的流量管控和修改，为什么还需要应用显示第传递 headers？
 
-![image-20200302201310658](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121347.png)
+![image-20200509205133689](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-125136.png-big)
 
 对于 envoy 来说，inbound 请求和 outbound 请求完全是独立的，envoy 无法感知请求之间的关联。实际上这些请求到底有无上下级关联，完全由应用自己决定。
 
 举一个特殊的业务场景，如果 Pod X 接收到 请求 A，触发的业务逻辑是：每隔 10 秒 发送一个请求到 Pod Y，如 B1，B2，B3，那么这些扇出的请求 Bx（x=1,2,3...），和请求 A 是什么关系？业务可能有不同的决策：认为 A 是 Bx 的父请求，或者认为 Bx 是独立的顶层请求。
 
-![image-20200302202701324](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121422.png)
+![image-20200302202701324](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-03-04-121422.png-small)
 
 ---
 
@@ -288,10 +288,10 @@ Istio-proxy 中的一段 iptables:
 
 该规则是希望在这里起作用: 假设当前Pod a属于service A, Pod 中用户容器通过服务名访问服务A, envoy中负载均衡逻辑将这次访问转发到了当前的pod ip, istio 希望这种场景服务端仍然有流量管控能力. 如图示:
 
-![](//zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2019-07-11-122132.png)
+![image-20200509205357257](https://zhongfox-blogimage-1256048497.cos.ap-guangzhou.myqcloud.com/2020-05-09-125359.png-small)
 
 ### 改造建议
 
 建议应用在接入 istio 之前， 调整服务监听地址，使用 `0.0.0.0` 而不是具体 IP。
-如果业务方认为改造难度大，可以参考之前分享的一个解决方案：[服务监听pod ip 在istio中路由异常分析](http://imfox.io/2019/07/11/istio-xds-podip/)
+如果业务方认为改造难度大，可以参考之前分享的一个解决方案：[服务监听pod ip 在istio中路由异常分析](http://zhonghua.io/2019/07/11/istio-xds-podip/)
 
